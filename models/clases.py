@@ -188,7 +188,7 @@ class Ingrediente:
     id = 0
     nombre = ""
     cantidad = 0
-    id_proveedor = ""
+    id_proveedor = 0
     
     def __init__(self, id, nombre, cantidad, id_proveedor):
         self.id = id

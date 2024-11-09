@@ -8,7 +8,7 @@ from models.productModel import ProductModel
 from models.UserProductModel import UserProductModel
 #ENTIDADES
 from models.user import User
-from BDCPI.models.classes.cliente import Product
+from models.producto import Product
 
 import os
 

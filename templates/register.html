@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register_login.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block customJS %}
+<script defer src="{{ url_for('static', filename='js/check_errors_register.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container_form">
+    <form action="/register" id="form-data" method="post" enctype="multipart/form-data">
+        <h1>Register</h1>
+        <div class="inputs_container">
+            <h3>NOMBRE COMPLETO</h3>
+            <input type="text" placeholder="Nombre Completo" name="nombre" required>
+        </div>
+        <div class="inputs_container">
+            <h3>USUARIO</h3>
+            <input type="text" placeholder="Usuario" name="user" id = "usuario" required>
+        </div>
+        <div class="inputs_container">
+            <h3>E-MAIL</h3>
+            <input type="email" name="e_mail" placeholder="E-mail" required>
+        </div>
+        <div class="inputs_container">
+            <h3>CONTRASEÑA</h3>
+            <input type="password" name="contrasena" placeholder="Contraseña" id = "password" required>
+        </div>
+        <div class="inputs_container">
+            <h3>CONFIRMAR CONTRASEÑA</h3>
+            <input type="password" placeholder="Contraseña" id = 'second_password' required>
+        </div>
+        <h3>SUBIR IMAGEN</h3>
+        <div class="img-container">
+            <div class="user_img">
+                <img src = "/static/img/profile.png" id="foto">
+                <input type="file" name = 'imagen' id = 'file' required>
+                <label for="file" id="upload_btn"><i class="fas  fa-camera"></i></label>
+            </div>
+            <span id="file_name">imagen.jpg</span>
+        </div>
+        <script src="{{ url_for('static', filename='js/img.js') }}"></script>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div id="error"></div>
+        <button type="submit" class="btn">Registrar</button>
+        <div class="registrar">
+            <p>Ya tienes una cuenta? <a href="/login">Iniciar Sesión</a></p>
+        </div>
+    </form>
+</div>
+{% endblock %}
+    

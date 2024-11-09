@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Mi perfil
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block customJS %}
+<script defer src="{{ url_for('static', filename='js/check_errors.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="nav_bar">
+    <ul>
+        <li style="margin-right: 50px;">TIENDA</li>
+        <li><a href = "/products">Productos</a></li>
+        <li><a href = "/add_product">Publicar producto</a></li>
+        {% if current_user.id == 1 %}
+        <li><a href = "/users">Gestionar usuarios</a></li>
+        {% endif %}
+        <li><a href = "/my_profile" style="margin-right: 10px;" >Perfil</a></li>
+        <li style="float: right;"><a href="/logout">Cerrar Sesión</a></li>
+    </ul>
+</div>
+
+<form action="/update_profile/{{ user_info.id }}" id="form-data" class="form-container" method="post">
+    <div class="img_profile">
+        <img src="/static/profile_pictures/{{user_info.profile_pic}}" width="150px" style="border-radius: 50%">
+    </div>
+    <div class="content-container" >
+        <h1>Información personal</h1>
+        <div class="inputs_container">
+            <h2>Nombre</h2>
+            <input type="text" id="nombre" name="nombre" class="inputs" placeholder="Nombre Completo" value="{{ user_info.nombre }}" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Usuario</h2>
+            <input type="text" id="usuario" name="usuario" class="inputs" placeholder="Usuario" value="{{ user_info.user }}" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Email</h2>
+            <input type="email" id="e-mail" name="e-mail"class="inputs" placeholder="E-mail" value="{{ user_info.email }}" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Contraseña</h2>
+            <input type="text" id="password" name="password"class="inputs" placeholder="Contraseña" value="{{ user_info.password }}" required>
+        </div>
+
+        <div id="error"></div>
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+</form>
+
+{% endblock %}

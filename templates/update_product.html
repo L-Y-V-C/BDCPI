@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Mi perfil
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="nav_bar">
+    <ul>
+        <li style="margin-right: 50px;">TIENDA</li>
+        <li><a href = "/products">Productos</a></li>
+        <li><a href = "/add_product">Publicar producto</a></li>
+        {% if current_user.id == 1 %}
+        <li><a href = "/users">Gestionar usuarios</a></li>
+        {% endif %}
+        <li><a href = "/my_profile" style="margin-right: 10px;" >Perfil</a></li>
+        <li style="float: right;"><a href="/logout">Cerrar Sesión</a></li>
+    </ul>
+</div>
+
+<form action="/update_product/{{ product_info.id }}" id="form-data" class="form-container" method="post">
+    <div class="img_profile">
+        <img src="/static/products_pictures/{{ product_info.product_pic }}" width="150px" style="border-radius: 50%">
+    </div>
+    <div class="content-container" >
+        <h1>Actualizar producto - {{ product_info.nombre }}</h1>
+        <div class="inputs_container">
+            <h2>Precio</h2>
+            <input type="number" id="precio" name="precio" class="inputs" placeholder="Precio del producto" value="{{ product_info.precio }}" required>
+        </div>
+        <div id="error"></div>
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+</form>
+
+{% endblock %}

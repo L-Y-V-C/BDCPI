@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register_login.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container_form">
+    <form action="/login" method="post">
+        <h1>Login</h1>
+        <div class="inputs_container">
+            <h3>USUARIO</h3>
+            <input type="text" placeholder="Usuario" name="user" required>
+        </div>
+        <div class="inputs_container">
+            <h3>CONTRASEÑA</h3>
+            <input type="password" placeholder="Contraseña" name="password" required>
+        </div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <button type="submit" class="btn">Login</button>
+        <div class="registrar">
+            <p>No tienes una cuenta? <a href="/register">Registrarse</a></p>
+        </div>
+    </form>
+</div>
+{% endblock %}

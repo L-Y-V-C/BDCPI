@@ -1,0 +1,93 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    PRODUCTOS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tabla_usuarios.css') }}">
+{% endblock %}
+{% block body %}
+<div class="nav_bar">
+    <ul>
+        <li style="margin-right: 50px;">TIENDA</li>
+        <li><a href = "/products">Productos</a></li>
+        <li><a href = "/add_product">Publicar producto</a></li>
+        {% if current_user.id == 1 %}
+        <li><a href = "/users">Gestionar usuarios</a></li>
+        {% endif %}
+        <li><a href = "/my_profile" style="margin-right: 10px;" >Perfil</a></li>
+        <li style="float: right;"><a href="/logout">Cerrar Sesión</a></li>
+    </ul>
+</div>
+
+    <main class="table" id="customers_table">
+        <section class="table__header">
+            <h1 style="color: white;">Productos</h1>
+            <div class="input-group">
+                <input type="search" placeholder="Buscar datos...">
+                <img src="/static/img/lupa.png" alt="">
+            </div>
+        </section>
+        <section class="table__body">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="header-text"> Id <span class="icon-arrow">&UpArrow;</span></th>
+                        <th class="header-text"> Nombre <span class="icon-arrow">&UpArrow;</span></th>
+                        <th class="header-text"> Descripcion <span class="icon-arrow">&UpArrow;</span></th>
+                        <th class="header-text"> Precio <span class="icon-arrow">&UpArrow;</span></th>
+                        <th class="header-text"> Status <span class="icon-arrow">&UpArrow;</span></th>
+                        <th class="header-text"> Comprador <span class="icon-arrow">&UpArrow;</span></th>
+                        <th class="header-text"> Acciones </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in products %}
+                        <tr>
+                            <td> {{ producto.id }} </td>
+                            <td> 
+                                <img src="{{ url_for('static', filename='products_pictures/' + producto.product_pic) }}" alt="Profile Picture">
+                                {{ producto.nombre }} </td>
+                            <td> {{ producto.descripcion }} </td>
+                            <td> {{ producto.precio }} </td>
+                            <td>
+                            {% if producto.status == 1 %}
+                                <div class="status-box red">Comprado</div>
+                            {% else %}
+                                <div class="status-box green">Disponible</div>
+                            {% endif %}
+                            </td>
+                            <td>
+                                {% for comprador in usuarios %}
+                                    {% if comprador.id == producto.buyer_id %}
+                                        <img src="{{ url_for('static', filename='profile_pictures/' + comprador.profile_pic) }}" alt="Profile Picture">
+                                        {{ comprador.nombre }}
+                                    {% endif %}               
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if current_user.id != 1 %}
+                                    {% if producto.status == 1 %}   
+                                        <a href="#" class="status-box red">No disponible</a>
+                                    {% else %}
+                                        {% if current_user.id == producto.user_id %}
+                                            <a href="#" class="status-box red">No disponible</a>
+                                        {% else %}
+                                            <a href="/buy_product/{{producto.id}}" class="btn-update">Comprar</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    <a href="/update_product/{{producto.id}}" class="btn-update" style="margin-bottom: 20px;">Actualizar</a>
+                                    <a href="/delete_product/{{producto.id}}" class="btn-delete">Borrar</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+    
+    <script src="{{ url_for('static', filename='js/tabla_usuarios.js') }}"></script>
+{% endblock %}

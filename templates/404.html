@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Pagina no encontrada - 404
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register_login.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container_form">
+    <h1>404</h1>
+    <h2>La pagina que estas buscando no se pudo encontrar</h2>
+</div>
+{% endblock %}

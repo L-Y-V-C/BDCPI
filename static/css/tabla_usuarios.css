@@ -1,0 +1,297 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body
+{
+    min-height: 100vh;
+    background-color: #F8F9FD;
+    justify-content: center;
+    align-items: center;
+}
+
+main.table
+{
+    width: 82vw;
+    height: 90vh;
+    background-color: rgb(207, 196, 189);
+    box-shadow: 0 .4rem .8rem rgb(244, 237, 237);
+    border-radius: .8rem;
+    overflow: hidden;
+    box-shadow: 2px 2px 2px black;
+    margin: 20px auto;
+}
+
+.table__header
+{
+    width: 100%;
+    height: 10%;
+    background: linear-gradient(90deg, rgba(230,100,100,1) 0%, rgba(227,97,131,1) 100%);
+    padding: .8rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table__header .input-group
+{
+    width: 35%;
+    height: 100%;
+    background-color: white;
+    padding: 0 .8rem;
+    border-radius: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .2s;
+}
+
+.table__header .input-group:hover
+{
+    width: 45%;
+    background-color: white;
+    box-shadow: 0 .1rem .4rem #0002;
+}
+
+.table__header .input-group img
+{
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.table__header .input-group input
+{
+    width: 100%;
+    padding: 0 .5rem 0 .3rem;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.table__body
+{
+    width: 95%;
+    max-height: calc(89% - 1.6rem);
+    background-color: rgba(255, 255, 255, 0.214);
+    margin: .8rem auto;
+    border-radius: .6rem;
+    overflow: auto;
+    overflow: overlay;
+}
+
+.table__body::-webkit-scrollbar
+{
+    width: 0.5rem;
+    height: 0.5rem;
+}
+table
+{
+    width: 100%;
+}
+table, th, td
+{
+    border-collapse: collapse;
+    padding: 1rem;
+    text-align: left;
+}
+
+thead th
+{
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, rgba(180, 80, 80, 1) 0%, rgba(177, 77, 111, 1) 100%);
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+tbody tr
+{
+    --delay: .1s;
+    transition: .5s ease-in-out var(--delay), background-color 0s;
+    background: rgba(181, 203, 232, 0.129);
+}
+
+tbody tr.hide
+{
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+tbody tr td,
+tbody tr td p,
+tbody tr td img
+{
+    transition: .2s ease-in-out;
+}
+
+tbody tr.hide td,
+tbody tr.hide td p
+{
+    padding: 0;
+    font: 0 / 0 sans-serif;
+    transition: .2s ease-in-out .5s;
+}
+
+tbody tr.hide td img {
+    width: 0;
+    height: 0;
+    transition: .2s ease-in-out .5s;
+}
+thead th span.icon-arrow
+{
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    border: 1.4px solid transparent;
+    text-align: center;
+    font-size: 1rem;
+    margin-left: .5rem;
+    transition: .2s ease-in-out;
+}
+thead th:hover span.icon-arrow
+{
+    border: 1.4px solid #fffefe7a;
+    color: rgb(246, 10, 10);
+}
+thead th:hover
+{
+    color: rgb(243, 219, 199);
+}
+thead th.active span.icon-arrow
+{
+    background-color: #545454;
+    color: #ffffff;
+}
+thead th.asc span.icon-arrow
+{
+    transform: rotate(180deg);
+}
+.btn-update
+{
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    background-color: #0b9310de;
+    color: white;
+    border: none;
+    border-radius: .3rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+.btn-delete{
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    background-color: #6e0f08;
+    color: white;
+    border: none;
+    border-radius: .3rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+.btn-update:hover
+{
+    background-color: #02f80ef1;
+    color: rgb(17, 17, 17);
+}
+.btn-delete:hover
+{
+    background-color: #ff0404fd;
+    color: rgb(17, 17, 17);
+}
+.btn-buy
+{
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    background-color: #11146cde;
+    color: white;
+    border: none;
+    border-radius: .3rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+.btn-cancel{
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    background-color: #60100b;
+    color: white;
+    border: none;
+    border-radius: .3rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+.btn-buy:hover
+{
+    background-color: #0b13f5f1;
+    color: rgb(241, 236, 236);
+}
+.btn-cancel:hover
+{
+    background-color: #f50b0bfd;
+    color: rgb(243, 238, 238);
+}
+.header-text
+{
+    color: white;
+}
+.btn-estate_oferta
+{
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    background-color: #ddb524de;
+    color: white;
+    border: none;
+    border-radius: .3rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+.btn-estate_vendido{
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    background-color: #3d2006;
+    color: white;
+    border: none;
+    border-radius: .3rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+td img
+{
+    width: 40px;
+    height: 40px;
+    margin-right: .5rem;
+    vertical-align: middle;
+    border-radius: 50%;
+}
+
+.status-box
+{
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+}
+
+.status-box.green
+{
+    background-color: #8bc34a;
+    color: #fff;
+}
+
+.status-box.red
+{
+    background-color: red;
+    color: #fff;
+}
+

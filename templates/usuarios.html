@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    USUARIOS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tabla_usuarios.css') }}">
+{% endblock %}
+{% block body %}
+{<div class="nav_bar">  
+    <ul>
+        <li style="margin-right: 50px;">TIENDA</li>
+        <li><a href = "/products">Productos</a></li>
+        <li><a href = "/add_product">Publicar producto</a></li>
+        {% if current_user.id == 1 %}
+        <li><a href = "/users">Gestionar usuarios</a></li>
+        {% endif %}
+        <li><a href = "/my_profile" style="margin-right: 10px;" >Perfil</a></li>
+        <li style="float: right;"><a href="/logout">Cerrar Sesión</a></li>
+    </ul>
+</div>}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Usuarios</h1>
+        <div class="input-group">
+            <input type="search" placeholder="Buscar datos...">
+            <img src="/static/img/lupa.png" alt="">
+        </div>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text"> Id <span class="icon-arrow">&UpArrow;</span></th>
+                    <th class="header-text"> Nombre <span class="icon-arrow">&UpArrow;</span></th>
+                    <th class="header-text"> Usuario <span class="icon-arrow">&UpArrow;</span></th>
+                    <th class="header-text"> Contraseña <span class="icon-arrow">&UpArrow;</span></th>
+                    <th class="header-text"> Email <span class="icon-arrow">&UpArrow;</span></th>
+                    <th class="header-text"> Acciones </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users_list %}
+                    <tr>
+                        <td> {{ user.id }} </td>
+                        <td> 
+                            <img src="{{ url_for('static', filename='profile_pictures/' + user.profile_pic) }}" alt="Profile Picture">
+                            {{ user.nombre }} </td>
+                        <td> {{ user.user }} </td>
+                        <td> {{ user.password }} </td>
+                        <td> {{ user.email }} </td>
+                        <td>
+                            <a href="/update_profile/{{user.id}}" class="btn-update">Actualizar</a>
+                            <a href="/delete_users/{{user.id}}" class="btn-delete">Borrar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+    
+<script src="{{ url_for('static', filename='js/tabla_usuarios.js') }}"></script>
+{% endblock %}
+

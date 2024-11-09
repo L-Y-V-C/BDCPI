@@ -1,0 +1,18 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Recuadros flexibles */
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Estilo para los recuadros */
+.box {
+    width: 150px;
+    height: 150px;
+    background-color: #3498db;
+    border-radius: 10px;
+    margin: 10px; /* Espaciado entre los recuadros */
+}

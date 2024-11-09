@@ -223,3 +223,5 @@ class PedidoConsumible_Consumible:
     def __init__(self, id_consumible, id_pedido_consumible):
         self.id_consumible = id_consumible
         self.id_pedido_consumible = id_pedido_consumible
+        
+None

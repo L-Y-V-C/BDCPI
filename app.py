@@ -66,6 +66,28 @@ def registro():
             return render_template('register.html')
     else:
         return render_template('register.html')
+#inicio
+@app.route('/inicio')
+def inicio():
+    return render_template('inicio.html')
+
+
+#mesas
+@app.route('/mesas')
+def mesas():
+    return render_template('mesas.html')
+
+#pagos
+@app.route('/pagos')
+def pagos():
+    return render_template('pagos.html')
+
+#comidas
+@app.route('/comidas')
+def comidas():
+    return render_template('comidas.html')
+
+
 
 #PERFIL
 @app.route('/update_profile/<int:id>', methods = ['GET', 'POST'])
@@ -81,10 +103,7 @@ def update_profile_web(id):
                 return redirect(url_for('users'))
     else:
         return render_template('update_profile.html', user_info = User_to_update)
-    
-@app.route('/my_profile')
-def profile():
-    return render_template('my_profile.html')
+
 
 #USUARIOS
 @app.route('/users')

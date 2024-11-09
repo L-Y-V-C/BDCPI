@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+{% block title %}
+    pagos
+{% endblock %}
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pagos.css') }}">
+{% endblock %}
+
+{% block body %}
+ <!-- Botón en la esquina superior derecha -->
+ <div class="minimize-button" onclick="handleMinimize()"></div>
+    
+ <!-- Cuadrícula de recuadros -->
+ <div class="grid">
+     <div class="box"></div>
+     <div class="box"></div>
+
+
+ </div>
+{% endblock %}

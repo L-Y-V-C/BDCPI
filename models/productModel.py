@@ -1,4 +1,4 @@
-from BDCPI.models.classes.cliente import Product
+from models.producto import Product
 class ProductModel():
     #Crear producto
     @classmethod

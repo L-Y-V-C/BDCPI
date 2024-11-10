@@ -1,15 +1,10 @@
 from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_mysqldb import MySQL
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-
 
 import models.clases_model_select as selector
-
 import models.clases_model_insert as selector3
-
 import models.clases as clases
 import models.clases_model_update as updater
-
 
 MYSQL_HOST = 'localhost'
 MYSQL_USER = 'root'
@@ -23,7 +18,6 @@ app.config['UPLOAD_FOLDER'] = 'static/profile_pictures'
 app.config['PRODUCTS_UPLOAD_FOLDER'] = 'static/products_pictures'
 
 data_base = MySQL(app)
-login_manager_app =  LoginManager(app)
 
 @app.route('/')
 def index():
@@ -76,12 +70,18 @@ def mesas():
 #Pagos
 @app.route('/pagos')
 def pagos():
-    return redirect(url_for('mesas'))
+    return redirect(url_for('montos'))
 
-#Clientes
-@app.route('/clientes')
-def clientes():
-    return redirect(url_for('clientes'))
+#clientes
+@app.route('/clientes', methods=['GET', 'POST'])
+def insert_cliente():
+    nombre = request.form.get('Nombre')
+    apellidos = request.form.get('Apellido')
+    tipo = request.form.get('Tipo')
+    cliente_obj = clases.Cliente(0,nombre, apellidos, tipo,0,0,0)
+    selector3.create_cliente(data_base, cliente_obj)
+    return render_template('ingresar_clientes.html')
+
 
 @app.route('/update_mesa/<int:id>', methods = ['GET', 'POST'])
 def update_mesa_info(id):
@@ -133,6 +133,13 @@ def guardar_detalle_pedido():
 
     data_base.connection.commit()
     return redirect(url_for('comidas'))
+
+#pagos
+@app.route('/montos')
+def montos():
+    montos_arr = selector.get_pagos(data_base)
+    return render_template('pagos.html', montos = montos_arr)
+
 
 
 '''

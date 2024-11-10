@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Seleccionar Consumibles
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
+
+{% block body %}
+<main class="table" id="consumables_table">
+    <section class="table__header">
+        <h1>Seleccionar Consumibles para el Cliente</h1>
+        <p>Cliente ID: {{ cliente }}</p>
+    </section>
+    <section class="table__body">
+        <form method="POST" action="{{ url_for('guardar_detalle_pedido') }}">
+            <input type="hidden" name="cliente_id" value="{{ cliente }}">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th class="header-text">Id</th>
+                        <th class="header-text">Nombre</th>
+                        <th class="header-text">Descripción</th>
+                        <th class="header-text">Precio</th>
+                        <th class="header-text">Stock</th>
+                        <th class="header-text">Seleccionar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consumible in consumibles %}
+                        <tr>
+                            <td>{{ consumible.id }}</td>
+                            <td>{{ consumible.nombre }}</td>
+                            <td>{{ consumible.descripcion }}</td>
+                            <td>{{ consumible.precio }}</td>
+                            <td>{{ consumible.stock }}</td>
+                            <td>
+                                <input type="checkbox" name="consumibles" value="{{ consumible.id }}">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn-submit">Confirmar Pedido</button>
+        </form>
+    </section>
+</main>
+{% endblock %}

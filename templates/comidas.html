@@ -1,18 +1,54 @@
 {% extends 'layout.html' %}
+
 {% block title %}
-    comidas
-{% endblock %}
-{% block customCSS %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/comidas.css') }}">
+    COMIDAS USUARIOS
 {% endblock %}
 
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
 {% block body %}
- <!-- Botón en la esquina superior derecha -->
- <div class="minimize-button" onclick="handleMinimize()"></div>
-    
- <!-- Cuadrícula de recuadros -->
- <div class="grid">
-     <div class="box"></div>
-     <div class="box"></div>
- </div>
+    <main class="table" id="customers_table">
+        <section class="table__header">
+            <h1 style="color: white;">Comida_Usuarios</h1>
+        </section>
+        <section class="table__body">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="header-text"> Id </th>
+                        <th class="header-text"> Nombre </th>
+                        <th class="header-text"> Apellidos </th>
+                        <th class="header-text"> Tipo </th>
+                        <th class="header-text"> IDMesaBillar </th>
+                        <th class="header-text"> IDPagoCOM </th>
+                        <th class="header-text"> IDMesaComida </th>
+                        <th class="header-text"> Modificar </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in clientes %}
+                        <tr>
+                            <td> {{ cliente.id }} </td>
+                            <td>
+                                {{ cliente.nombre }}
+                            </td>
+                            <td> {{ cliente.apellidos }} </td>
+                            <td>
+                                {{ cliente.tipo }}
+                            </td>
+                            <td> {{ cliente.id_mesa_billar }} </td>
+                            <td>
+                                {{ cliente.id_pago_com }}
+                            </td>
+                            <td> {{ cliente.id_mesa_comida }} </td>
+                            <td>
+                                <a href="/select-consumables/{{ cliente.id }}" class="btn-update" style="margin-bottom: 20px;">Actualizar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
 {% endblock %}

@@ -2,15 +2,6 @@ from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_mysqldb import MySQL
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-#MODELOS
-from models.UserModel import UserModel
-from models.productModel import ProductModel
-from models.UserProductModel import UserProductModel
-#ENTIDADES
-from models.user import User
-from models.producto import Product
-
-import os
 
 import models.clases_model_select as selector
 import models.clases as clases
@@ -29,10 +20,6 @@ app.config['PRODUCTS_UPLOAD_FOLDER'] = 'static/products_pictures'
 
 data_base = MySQL(app)
 login_manager_app =  LoginManager(app)
-
-@login_manager_app.user_loader
-def load_user(id):
-    return UserModel.get_by_id(data_base, id)
 
 @app.route('/')
 def index():
@@ -77,11 +64,20 @@ def inicio():
     return render_template('inicio.html')
 '''
 
-#mesas
+#Mesas
 @app.route('/mesas')
 def mesas():
     mesas_arr = selector.get_all_mesabillar(data_base)
     return render_template('mesas.html', mesas = mesas_arr)
+#Pagos
+@app.route('/pagos')
+def pagos():
+    return redirect(url_for('mesas'))
+
+#Clientes
+@app.route('/clientes')
+def clientes():
+    return redirect(url_for('clientes'))
 
 @app.route('/update_mesa/<int:id>', methods = ['GET', 'POST'])
 def update_mesa_info(id):
@@ -93,11 +89,6 @@ def update_mesa_info(id):
         return redirect(url_for('mesas'))
     else:
         return render_template('update_mesa.html', mesa = mesa_to_update)
-
-#pagos
-@app.route('/pagos')
-def pagos():
-    return render_template('pagos.html')
 
 #comidas
 @app.route('/comidas')

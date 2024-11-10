@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    INGRESAR CLIENTES
+    Editar mesa
 {% endblock %}
 
 {% block customCSS %}
@@ -9,16 +9,21 @@
 {% endblock %}
 
 {% block body %}
-<form action="/registrar_cliente" id="form-data" class="form-container" method="post">
+
+<form action = "/update_cliente/{{ cliente.id }}" id="form-data" class="form-container" method="post">
+    <div class="img_profile">
+        <img src="/static/img/profile.png" width="150px" style="border-radius: 50%">
+    </div>
+    
     <div class="content-container" >
-        <h1>Ingresar Clientes</h1>
+        <h1>Información personal del cliente {{ cliente.id }}</h1>
         <div class="inputs_container">
             <h2>Nombre</h2>
-            <input type="text" name="nombre" placeholder="Nombre del cliente" required>
+            <input type="text" id="nombre" name="nombre" class="inputs" placeholder="Nombre" value="{{ cliente.nombre }}" required>
         </div>
         <div class="inputs_container">
             <h2>Apellido</h2>
-            <input type="text" name="apellido" placeholder="Apellidos" required>
+            <input type="text" id="apellido" name="apellido" class="inputs" placeholder="Apellido" value="{{ cliente.apellidos }}" required>
         </div>
         <div class="select-container">
             <h2>Tipo</h2>
@@ -26,10 +31,9 @@
                 <option value="Regular">Regular</option>
                 <option value="Casillero">Casillero</option>
             </select>
-        </div>
+        </div>        
         <button type="submit" class="btn">Guardar cambios</button>
     </div>
-    
 </form>
 
 {% endblock %}

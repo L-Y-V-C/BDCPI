@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_mysqldb import MySQL
 
 import models.clases_model_select as selector
-import models.clases_model_insert as selector3
+import models.clases_model_insert as inserter
 import models.clases as clases
 import models.clases_model_update as updater
 
@@ -72,15 +72,37 @@ def mesas():
 def pagos():
     return redirect(url_for('montos'))
 
-#clientes
-@app.route('/clientes', methods=['GET', 'POST'])
-def insert_cliente():
-    nombre = request.form.get('Nombre')
-    apellidos = request.form.get('Apellido')
-    tipo = request.form.get('Tipo')
-    cliente_obj = clases.Cliente(0,nombre, apellidos, tipo,0,0,0)
-    selector3.create_cliente(data_base, cliente_obj)
-    return render_template('ingresar_clientes.html')
+#CLIENTES
+@app.route('/clientes')
+def clientes():
+    clientes_arr = selector.get_all_clientes(data_base)
+    return render_template('clientes_table.html', clientes = clientes_arr)
+
+
+@app.route('/registrar_cliente', methods = ['GET', 'POST'])
+def register_client():
+    if request.method == 'POST':
+        cliente_obj = clases.Cliente(0,request.form['nombre'], request.form['apellido'], request.form['tipo'], None, None, None)
+        inserter.create_cliente(data_base, cliente_obj)
+        return redirect(url_for('clientes'))
+    else:
+        return render_template('ingresar_clientes.html')
+
+@app.route('/update_cliente/<int:id>', methods = ['GET', 'POST'])
+def update_cliente_by_id(id):
+    cliente_to_update = selector.get_cliente_by_id(data_base, id)
+    if request.method == 'POST':
+        #HACER ESTO
+        cliente_to_update.nombre = request.form['nombre']
+        cliente_to_update.apellidos = request.form['apellido']
+        cliente_to_update.tipo = request.form['tipo']
+        
+        print ("MESA COMIDA PRUEBA: " ,cliente_to_update.id_mesa_comida)
+        print("\n\n\n\n\n\n\n")
+        updater.update_cliente(data_base, cliente_to_update)
+        return redirect(url_for('clientes'))
+    else:
+        return render_template('update_cliente.html', cliente = cliente_to_update)
 
 
 @app.route('/update_mesa/<int:id>', methods = ['GET', 'POST'])
@@ -118,7 +140,7 @@ def guardar_detalle_pedido():
 
 
     pedido_consumible_obj = clases.PedidoConsumible(0,1,cliente_id, 0)
-    selector3.create_pedido_consumible(data_base, pedido_consumible_obj)
+    inserter.create_pedido_consumible(data_base, pedido_consumible_obj)
 
     cursor = data_base.connection.cursor()
     cursor.execute("SELECT LAST_INSERT_ID();")
@@ -128,7 +150,7 @@ def guardar_detalle_pedido():
         pedido_consumible_consumible_obj = clases.PedidoConsumible_Consumible(
             consumible_id, id_pedido_consumible
         )
-        selector3.create_pedido_consumible_consumible(data_base, pedido_consumible_consumible_obj)
+        inserter.create_pedido_consumible_consumible(data_base, pedido_consumible_consumible_obj)
 
 
     data_base.connection.commit()

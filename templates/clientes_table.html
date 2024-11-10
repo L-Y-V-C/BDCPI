@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    MESAS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Clientes</h1>
+        <div class="registrar">
+            <a href="/registrar_cliente" class="a-ref">Añadir cliente</a>
+        </div>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id</th>
+                    <th class="header-text">Nombre</th>
+                    <th class="header-text">Apellidos</th>
+                    <th class="header-text">Tipo</th>
+                    <th class="header-text">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                    <tr>
+                        <td>{{ cliente.id }}</td>
+                        <td>{{ cliente.nombre }}</td>
+                        <td>{{ cliente.apellidos }}</td>
+                        <td>{{ cliente.tipo }}</td>
+                        <td>
+                            <a href="/update_cliente/{{cliente.id}}" class="btn-update" style="margin-bottom: 20px;">Editar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

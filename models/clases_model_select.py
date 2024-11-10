@@ -68,6 +68,27 @@ def get_all_stock(data_base, id):
     consum = clases.Consumible(None,None,None,None,arr)
     return consum
 
+
+def resumen_distribucion_ambientes(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.resumen_distribucion_ambientes();"""
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    distribucion_list = []
+    for distri in arr:
+        distribucion_list.append(clases.InfoLocal(distri[0], distri[1], distri[2], distri[3],distri[4]))
+    return distribucion_list
+
+def get_all_locales(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_all_locales();"""
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    locales_list = []
+    for locales in arr:
+        locales_list.append(clases.Local(locales[0], locales[1], locales[2], locales[3]))
+    return locales_list
+
 #PAGOS
 def get_monto_mesa(data_base, cliente_id):
     cursor = data_base.connection.cursor()
@@ -95,3 +116,4 @@ def get_monto_total_cliente(data_base, cliente_id):
     arr = cursor.fetchone()
     monto_total = clases.MontoTotal(arr[0], arr[1], arr[2])
     return monto_total
+

@@ -149,7 +149,7 @@ def guardar_detalle_pedido():
             productos_con_stock.append(consumible_id) 
     if sin_stock:
         mensaje = "Algunos productos no tienen stock suficiente: " + ', '.join(map(str, sin_stock))
-        flash(mensaje)  # Mantienes el flash para pasar el mensaje a la plantilla
+        flash(mensaje)
         return redirect(url_for('select_consumables', cliente_id=cliente_id))
 
     for consumible_id in productos_con_stock:
@@ -182,6 +182,38 @@ def montos_cliente(cliente_id):
                            monto_mesa = monto_mesa, 
                            monto_consumibles = monto_consumibles, 
                            monto_total = monto_total)
+
+
+
+@app.route('/local')
+def locales():
+    locales_arr = selector.get_all_locales(data_base)
+    return render_template('locales.html', locales=locales_arr)
+
+@app.route('/local_info/<int:local_id>')
+def local_info(local_id):
+    data = selector.resumen_distribucion_ambientes(data_base)
+    locales_info = {}
+    for row in data:
+        if row.id_local not in locales_info:
+            locales_info[row.id_local] = {
+                'id_local': row.id_local,
+                'direccion': row.direccion,
+                'mesas': []
+            }
+        
+        locales_info[row.id_local]['mesas'].append({
+            'nombre': row.nombre,
+            'id_mesa_billar': row.id_mesa_billar,
+            'id_mesa_comida': row.id_mesa_comida
+        })
+
+    local = locales_info.get(local_id, None)
+    
+    if not local:
+        return render_template('404.html', message="Local no encontrado")
+    
+    return render_template('local_info.html', local=local)
 
 
 

@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    LOCALES
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/locales_tablas.css') }}">
+{% endblock %}
+
+{% block body %}
+    <main class="container">
+        <h1 class="heading">Locales Disponibles</h1>
+        <div class="box-container">
+            {% for local in locales %}
+                <div class="box">
+                    <img src="{{ url_for('static', filename='img/icono' ~ local.id ~ '.png') }}" alt="Icono Local {{ local.id }}">
+                    <h3>{{ local.direccion }}</h3>
+                    <p><strong>Hora Apertura:</strong> {{ local.hora_apertura }}</p>
+                    <p><strong>Hora Cierre:</strong> {{ local.hora_cierre }}</p>
+                    <a href="{{ url_for('local_info', local_id=local.id) }}" class="btn">Seleccionar</a>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}

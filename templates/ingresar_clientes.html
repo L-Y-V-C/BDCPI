@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    INGRESAR CLIENTES
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ingresar.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
+
+{% block body %}
+<div class="container_form">
+    <form action="/clientes" id="form-data" method="post" enctype="multipart/form-data">
+        <h1>Ingresar Clientes</h1>
+        <div class="inputs_container">
+            <h3>Nombre</h3>
+            <input type="text" placeholder="Nombre" name="nombre" required>
+        </div>
+        <div class="inputs_container">
+            <h3>Apellido</h3>
+            <input type="text" name="Apellido" placeholder="Apellido" required>
+        </div>
+        <div class="inputs_container">
+            <h3>Tipo</h3>
+            <input type="text" placeholder="Tipo" name="Tipo" id="Tipo" required>
+        </div>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div id="flash-message" class="alert alert-success" style="display: none;">
+                    {{ messages[0] }}  <!-- Muestra el primer mensaje -->
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <div id="error"></div>
+        <button type="submit" class="btn">Ingresar</button>
+    </form>
+</div>
+
+
+
+    
+
+
+{% endblock %}

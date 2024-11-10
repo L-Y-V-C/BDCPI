@@ -1,6 +1,6 @@
 def create_cliente(data_base, cliente_obj):
     cursor = data_base.connection.cursor()
-    sql_command = """CALL insert_cliente('{}', '{}', '{}', '{}', '{}', '{}');""".format(
+    sql_command = """CALL db_billar.insert_cliente('{}', '{}', '{}', '{}', '{}', '{}');""".format(
         cliente_obj.nombre, cliente_obj.apellidos, cliente_obj.tipo, 
         cliente_obj.id_mesa_billar, cliente_obj.id_pago_com, cliente_obj.id_mesa_comida)
     cursor.execute(sql_command)

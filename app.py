@@ -12,10 +12,12 @@ from models.producto import Product
 
 import os
 
+import models.clases_model_select as selector
+
 MYSQL_HOST = 'localhost'
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = ''
-MYSQL_DB = 'test_flask'
+MYSQL_DB = 'db_billar'
 
 
 app = Flask (__name__)
@@ -32,8 +34,9 @@ def load_user(id):
 
 @app.route('/')
 def index():
-    return redirect(url_for('login'))
+    return redirect(url_for('mesas'))
 
+'''
 #LOGIN
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -70,12 +73,16 @@ def registro():
 @app.route('/inicio')
 def inicio():
     return render_template('inicio.html')
-
+'''
 
 #mesas
 @app.route('/mesas')
 def mesas():
-    return render_template('mesas.html')
+    mesas_arr = selector.get_all_mesabillar(data_base)
+    #IMPRIMIR MESAS CON print()
+    for mesa in mesas_arr:
+        print(mesa.id, "   " ,mesa.tipo, "  " ,mesa.estado)
+    return render_template('mesas.html', mesas = mesas_arr)
 
 #pagos
 @app.route('/pagos')
@@ -88,7 +95,7 @@ def comidas():
     return render_template('comidas.html')
 
 
-
+'''
 #PERFIL
 @app.route('/update_profile/<int:id>', methods = ['GET', 'POST'])
 @login_required
@@ -110,6 +117,7 @@ def update_profile_web(id):
 def users():
     users_list = UserModel.get_all_users(data_base)
     return render_template('usuarios.html', users_list = users_list)
+
 #BORRAR USUARIOS
 @app.route('/delete_users/<int:id>')
 def delete_user_id(id):
@@ -162,14 +170,16 @@ def update_product(id):
 def logout():
     logout_user()
     return redirect(url_for('login'))
+'''
 
 @app.errorhandler(404)
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
 
+'''
 @app.errorhandler(401)
 def error_401(error):
     return redirect(url_for('login'))
-
+'''
 if __name__ == '__main__':
     app.run(debug = True)

@@ -10,7 +10,7 @@
 {% block body %}
     <main class="table" id="customers_table">
         <section class="table__header">
-            <h1 style="color: white;">Comida_Usuarios</h1>
+            <h1 style="color: white;">Comida usuarios</h1>
         </section>
         <section class="table__body">
             <table>
@@ -20,9 +20,6 @@
                         <th class="header-text"> Nombre </th>
                         <th class="header-text"> Apellidos </th>
                         <th class="header-text"> Tipo </th>
-                        <th class="header-text"> IDMesaBillar </th>
-                        <th class="header-text"> IDPagoCOM </th>
-                        <th class="header-text"> IDMesaComida </th>
                         <th class="header-text"> Modificar </th>
                     </tr>
                 </thead>
@@ -30,19 +27,10 @@
                     {% for cliente in clientes %}
                         <tr>
                             <td> {{ cliente.id }} </td>
-                            <td>
-                                {{ cliente.nombre }}
-                            </td>
+                            <td> {{ cliente.nombre }} </td>
                             <td> {{ cliente.apellidos }} </td>
-                            <td>
-                                {{ cliente.tipo }}
-                            </td>
-                            <td> {{ cliente.id_mesa_billar }} </td>
-                            <td>
-                                {{ cliente.id_pago_com }}
-                            </td>
-                            <td> {{ cliente.id_mesa_comida }} </td>
-                            <td>
+                            <td> {{ cliente.tipo }} </td>
+                            <td style="display: flex; justify-content: center;">
                                 <a href="/select-consumables/{{ cliente.id }}" class="btn-update" style="margin-bottom: 20px;">Actualizar</a>
                             </td>
                         </tr>

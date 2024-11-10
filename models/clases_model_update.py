@@ -24,3 +24,10 @@ def update_cliente(data_base, cliente_obj):
     ))
     
     data_base.connection.commit()
+def update_Stock (data_base, mesa_obj):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.update_Stock('{}');""".format(
+        mesa_obj.id
+    )
+    cursor.execute(sql_command)
+    data_base.connection.commit()

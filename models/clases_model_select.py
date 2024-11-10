@@ -54,7 +54,7 @@ def get_cliente_by_id(data_base, id):
     cursor = data_base.connection.cursor()
     sql_command = """CALL db_billar.get_cliente_by_id('{}');""".format(id)
     cursor.execute(sql_command)
-    
+
     arr = cursor.fetchone()
     cliente = clases.Cliente(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], arr[6])
     return cliente
@@ -94,7 +94,11 @@ def get_monto_mesa(data_base, cliente_id):
     cursor = data_base.connection.cursor()
     sql_command = """CALL db_billar.get_monto_mesa({});""".format(cliente_id)
     cursor.execute(sql_command)
-    arr = cursor.fetchone()    
+    arr = cursor.fetchone()
+    if arr == None:
+        print("boi is NONe")
+        monto_mesa = clases.MontoMesa(None,None,None,"00:00:00","00:00:00",0)
+        return monto_mesa
     monto_mesa = clases.MontoMesa(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
     return monto_mesa
 
@@ -114,6 +118,10 @@ def get_monto_total_cliente(data_base, cliente_id):
     sql_command = """CALL db_billar.get_monto_total_cliente({});""".format(cliente_id)
     cursor.execute(sql_command)
     arr = cursor.fetchone()
+    if arr[0] == None:
+        arr = (0,) + arr[1:]
+    if arr[2] is None:
+        arr = arr[:2] + (0,) + arr[3:]
     monto_total = clases.MontoTotal(arr[0], arr[1], arr[2])
     return monto_total
 

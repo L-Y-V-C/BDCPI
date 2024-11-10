@@ -127,7 +127,7 @@ def comidas():
 @app.route('/select-consumables/<int:cliente_id>', methods=['GET', 'POST'])
 def select_consumables(cliente_id):
     consumibles = selector.get_all_consumibles(data_base)
-    return render_template('select_consumables.html', cliente=cliente_id, consumibles=consumibles)
+    return render_template('select_consumables.html', cliente=cliente_id, consumibles=consumibles, sin_stock=None)
 
 
 @app.route('/guardar-detalle-pedido', methods=['POST'])
@@ -138,24 +138,39 @@ def guardar_detalle_pedido():
     if not cliente_id or not seleccionados:
         return redirect(url_for('comidas'))
 
+    sin_stock = []
+    productos_con_stock = []
 
-    pedido_consumible_obj = clases.PedidoConsumible(0,1,cliente_id, 0)
+    for consumible_id in seleccionados:
+        stock_actual = selector.get_all_stock(data_base, consumible_id).stock
+        if stock_actual[0] <= 0:
+            sin_stock.append(consumible_id)
+        else:
+            productos_con_stock.append(consumible_id) 
+    if sin_stock:
+        mensaje = "Algunos productos no tienen stock suficiente: " + ', '.join(map(str, sin_stock))
+        flash(mensaje)  # Mantienes el flash para pasar el mensaje a la plantilla
+        return redirect(url_for('select_consumables', cliente_id=cliente_id))
+
+    for consumible_id in productos_con_stock:
+        consumible_obj = clases.Consumible(consumible_id, None, None, None, None)
+        updater.update_Stock(data_base, consumible_obj)
+
+    pedido_consumible_obj = clases.PedidoConsumible(0, 1, cliente_id, 0)
     inserter.create_pedido_consumible(data_base, pedido_consumible_obj)
 
     cursor = data_base.connection.cursor()
     cursor.execute("SELECT LAST_INSERT_ID();")
     id_pedido_consumible = cursor.fetchone()[0]
     
-    for consumible_id in seleccionados:
+    for consumible_id in productos_con_stock:
         pedido_consumible_consumible_obj = clases.PedidoConsumible_Consumible(
             consumible_id, id_pedido_consumible
         )
         inserter.create_pedido_consumible_consumible(data_base, pedido_consumible_consumible_obj)
 
-
     data_base.connection.commit()
     return redirect(url_for('comidas'))
-
 #pagos
 @app.route('/montos')
 def montos():

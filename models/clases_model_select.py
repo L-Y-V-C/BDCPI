@@ -68,3 +68,12 @@ def get_cliente_by_id(data_base, id):
     arr = cursor.fetchone()
     cliente = clases.Cliente(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], arr[6])
     return cliente
+
+def get_all_stock(data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_all_stock('{}');""".format(id)
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchone()
+    consum = clases.Consumible(None,None,None,None,arr)
+    return consum

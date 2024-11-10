@@ -2,20 +2,15 @@ from flask import Flask, render_template, url_for, request, redirect, flash
 from flask_mysqldb import MySQL
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-#MODELOS
-from models.UserModel import UserModel
-from models.productModel import ProductModel
-from models.UserProductModel import UserProductModel
-#ENTIDADES
-from models.user import User
-from models.producto import Product
 
-import os
+import models.clases_model_select as selector
+import models.clases as clases
+import models.clases_model_update as updater
 
 MYSQL_HOST = 'localhost'
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = ''
-MYSQL_DB = 'test_flask'
+MYSQL_DB = 'db_billar'
 
 
 app = Flask (__name__)
@@ -26,14 +21,11 @@ app.config['PRODUCTS_UPLOAD_FOLDER'] = 'static/products_pictures'
 data_base = MySQL(app)
 login_manager_app =  LoginManager(app)
 
-@login_manager_app.user_loader
-def load_user(id):
-    return UserModel.get_by_id(data_base, id)
-
 @app.route('/')
 def index():
-    return redirect(url_for('login'))
+    return redirect(url_for('mesas'))
 
+'''
 #LOGIN
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -70,17 +62,33 @@ def registro():
 @app.route('/inicio')
 def inicio():
     return render_template('inicio.html')
+'''
 
-
-#mesas
+#Mesas
 @app.route('/mesas')
 def mesas():
-    return render_template('mesas.html')
-
-#pagos
+    mesas_arr = selector.get_all_mesabillar(data_base)
+    return render_template('mesas.html', mesas = mesas_arr)
+#Pagos
 @app.route('/pagos')
 def pagos():
-    return render_template('pagos.html')
+    return redirect(url_for('mesas'))
+
+#Clientes
+@app.route('/clientes')
+def clientes():
+    return redirect(url_for('clientes'))
+
+@app.route('/update_mesa/<int:id>', methods = ['GET', 'POST'])
+def update_mesa_info(id):
+    mesa_to_update = selector.get_mesa_by_id(data_base, id)
+    if request.method == 'POST':
+        mesa_to_update.estado = request.form['estado']
+        print("ESTADO: " , mesa_to_update.estado)
+        updater.update_mesa_billar(data_base, mesa_to_update)
+        return redirect(url_for('mesas'))
+    else:
+        return render_template('update_mesa.html', mesa = mesa_to_update)
 
 #comidas
 @app.route('/comidas')
@@ -88,7 +96,7 @@ def comidas():
     return render_template('comidas.html')
 
 
-
+'''
 #PERFIL
 @app.route('/update_profile/<int:id>', methods = ['GET', 'POST'])
 @login_required
@@ -110,6 +118,7 @@ def update_profile_web(id):
 def users():
     users_list = UserModel.get_all_users(data_base)
     return render_template('usuarios.html', users_list = users_list)
+
 #BORRAR USUARIOS
 @app.route('/delete_users/<int:id>')
 def delete_user_id(id):
@@ -162,14 +171,16 @@ def update_product(id):
 def logout():
     logout_user()
     return redirect(url_for('login'))
+'''
 
 @app.errorhandler(404)
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
 
+'''
 @app.errorhandler(401)
 def error_401(error):
     return redirect(url_for('login'))
-
+'''
 if __name__ == '__main__':
     app.run(debug = True)

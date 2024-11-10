@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Editar mesa
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<form action="/update_mesa/{{ mesa.id }}" id="form-data" class="form-container" method="post">
+    <div class="img_profile">
+        {% if mesa.tipo == "Normal" %}
+            <img src="/static/img/normal.jpg" class="profile-img">
+        {% elif mesa.estado == "Carambola" %}
+            <img src="/static/img/carambola.jpg" class="profile-img">
+        {% else %}
+            <img src="/static/img/snooker.jpg" class="profile-img">
+        {% endif %}
+    </div>
+    <div class="content-container" >
+        <h1>Información de la mesa {{ mesa.id }}</h1>
+        <div class="inputs_container">
+            <h2>Tipo</h2>
+            <h3>{{ mesa.tipo }}</h3>
+        </div>
+        <div class="inputs_container">
+            <h2>Estado</h2>
+            <div class="select-container">
+                <select name="estado" required>
+                    <option value="Disponible">Disponible</option>
+                    <option value="En uso">En uso</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                </select>
+            </div>
+        </div>
+        
+        
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+</form>
+
+{% endblock %}

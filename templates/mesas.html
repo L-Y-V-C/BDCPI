@@ -1,22 +1,52 @@
 {% extends 'layout.html' %}
+
 {% block title %}
-    mesas
-{% endblock %}
-{% block customCSS %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/mesass.css') }}">
+    MESAS
 {% endblock %}
 
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
 {% block body %}
- <!-- Botón en la esquina superior derecha -->
- <div class="minimize-button" onclick="handleMinimize()"></div>
-    
- <!-- Cuadrícula de recuadros -->
- <div class="grid">
-     <div class="box"></div>
-     <div class="box"></div>
-     <div class="box"></div>
-     <div class="box"></div>
-     <div class="box"></div>
-     <div class="box"></div>
- </div>
+
+
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Mesas</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id</th>
+                    <th class="header-text">Tipo</th>
+                    <th class="header-text">Estado</th>
+                    <th class="header-text">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mesa in mesas %}
+                    <tr>
+                        <td style="width: 10%;">{{ mesa.id }}</td>
+                        <td style="width: 30%;">{{ mesa.tipo }}</td>
+                        <td style="width: 30%;">
+                            {% if mesa.estado == "En uso" %}
+                                <div class="status-box red">En uso</div>
+                            {% elif mesa.estado == "Mantenimiento" %}
+                                <div class="status-box yellow">Mantenimiento</div>
+                            {% else %}
+                                <div class="status-box green">Disponible</div>
+                            {% endif %}
+                            
+                        </td>
+                        <td>
+                            <a href="/update_mesa/{{mesa.id}}" class="btn-update" style="margin-bottom: 20px;">Actualizar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
 {% endblock %}

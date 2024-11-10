@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-11-2024 a las 04:25:42
+-- Tiempo de generación: 10-11-2024 a las 01:00:54
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -25,6 +25,22 @@ DELIMITER $$
 --
 -- Procedimientos
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_distribucion_ambientes` ()   BEGIN
+	SELECT am.Nombre,mesab.IDMesaBillar,mesacom.IdMesaComida FROM ambiente AS am INNER JOIN mesabillar AS mesab INNER JOIN mesacomida AS mesacom ON am.IDAmbiente=mesab.IDAmbiente AND am.IDAmbiente=mesacom.IDAmbiente;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_mesabillar` ()   BEGIN
+	SELECT IDMesaBillar,Tipo,Estado FROM mesabillar GROUP BY IDMesaBillar;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_pedido_completo` ()   BEGIN
+	SELECT CONCAT(cl.Nombre,' ',cl.Apellidos) AS 'Nombre_Cliente',tl.IDLocal,con.Nombre,con.Precio,pedidocon.Cantidad FROM tlocal AS tl INNER JOIN local_consumible INNER JOIN consumible AS con INNER JOIN pedidoconsumible_consumible INNER JOIN pedidoconsumible AS pedidocon INNER JOIN cliente AS cl ON tl.IDLocal=local_consumible.IDLocal AND local_consumible.IDConsumible = con.IDConsumible AND con.IDConsumible=pedidoconsumible_consumible.IDConsumible AND pedidoconsumible_consumible.IDPedidoConsumible=pedidocon.IDPedidoConsumible AND pedidocon.IDCliente=cl.IDCliente;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_propietario_casillero` ()   BEGIN
+	SELECT CONCAT(c.Nombre,' ',c.Apellidos) AS 'Nombre y Apellidos',ca.Numero AS 'Numero casillero' FROM cliente AS c INNER JOIN casillero AS ca ON c.IDCliente=ca.IDCasillero;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_ambiente` (IN `NombreAmbiente` VARCHAR(30), IN `CapacidadAmbiente` INT, IN `IDLocalAmbiente` INT)   BEGIN
     INSERT INTO ambiente (Nombre, Capacidad, IDLocal) VALUES (0,NombreAmbiente, CapacidadAmbiente, IDLocalAmbiente);
 END$$

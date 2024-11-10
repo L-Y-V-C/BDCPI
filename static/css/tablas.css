@@ -184,7 +184,8 @@ thead th.asc span.icon-arrow
     transition: background-color 0.3s;
     text-decoration: none;
 }
-.btn-delete{
+.btn-delete
+{
     padding: .5rem 1rem;
     margin-right: .5rem;
     background-color: #6e0f08;
@@ -197,8 +198,7 @@ thead th.asc span.icon-arrow
 }
 .btn-update:hover
 {
-    background-color: #02f80ef1;
-    color: rgb(17, 17, 17);
+    background-color: #49a64ef1;
 }
 .btn-delete:hover
 {
@@ -281,6 +281,11 @@ td img
     border-radius: 5px;
     border: 1px solid #ccc;
     text-decoration: none;
+    width: 150px;
+    box-sizing: border-box;
+    margin: 5px auto;
+    font-weight: 500;
+    
 }
 
 .status-box.green
@@ -292,6 +297,12 @@ td img
 .status-box.red
 {
     background-color: red;
+    color: #fff;
+}
+
+.status-box.yellow
+{
+    background-color: rgb(210, 210, 75);
     color: #fff;
 }
 

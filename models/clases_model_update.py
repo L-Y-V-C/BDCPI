@@ -10,6 +10,7 @@ def update_mesa_billar(data_base, mesa_obj):
         mesa_obj.id_ambiente
     ))
     data_base.connection.commit()
+    
 def update_cliente(data_base, cliente_obj):
     cursor = data_base.connection.cursor()
     sql_command = """CALL db_billar.update_cliente(%s, %s, %s, %s, %s, %s, %s);"""

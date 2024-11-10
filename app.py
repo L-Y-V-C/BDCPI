@@ -22,46 +22,6 @@ data_base = MySQL(app)
 @app.route('/')
 def index():
     return redirect(url_for('mesas'))
-
-'''
-#LOGIN
-@app.route('/login', methods = ['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        user = User(0, '', (request.form['user']), (request.form['password']), '', '')
-        logged_user = UserModel.login(user, data_base)
-        if logged_user != None:
-            if logged_user.password == True:
-                login_user(logged_user)
-                return redirect(url_for('products'))
-            else:
-                flash("Contraseña invalida")
-                return render_template('login.html')    
-        else:
-            flash("Usuario no encontrado")
-            return render_template('login.html')
-    else:
-        return render_template('login.html')
-#REGISTER
-@app.route('/register', methods = ['GET', 'POST'])
-def registro():
-    if request.method == 'POST':
-        file = request.files['imagen']
-        user = User (0, request.form['nombre'], request.form['user'], request.form['contrasena'], request.form['e_mail'], file.filename)
-        if UserModel.register(user, data_base):
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename)) #Guarda imagen
-            return redirect(url_for('login'))
-        else:
-            flash('El usuario ya existe!')
-            return render_template('register.html')
-    else:
-        return render_template('register.html')
-#inicio
-@app.route('/inicio')
-def inicio():
-    return render_template('inicio.html')
-'''
-
 #Mesas
 @app.route('/mesas')
 def mesas():
@@ -92,13 +52,10 @@ def register_client():
 def update_cliente_by_id(id):
     cliente_to_update = selector.get_cliente_by_id(data_base, id)
     if request.method == 'POST':
-        #HACER ESTO
         cliente_to_update.nombre = request.form['nombre']
         cliente_to_update.apellidos = request.form['apellido']
         cliente_to_update.tipo = request.form['tipo']
         
-        print ("MESA COMIDA PRUEBA: " ,cliente_to_update.id_mesa_comida)
-        print("\n\n\n\n\n\n\n")
         updater.update_cliente(data_base, cliente_to_update)
         return redirect(url_for('clientes'))
     else:
@@ -183,8 +140,6 @@ def montos_cliente(cliente_id):
                            monto_consumibles = monto_consumibles, 
                            monto_total = monto_total)
 
-
-
 @app.route('/local')
 def locales():
     locales_arr = selector.get_all_locales(data_base)
@@ -211,98 +166,12 @@ def local_info(local_id):
     local = locales_info.get(local_id, None)
     
     if not local:
-        return render_template('404.html', message="Local no encontrado")
-    
-    return render_template('local_info.html', local=local)
-
-
-
-
-'''
-#PERFIL
-@app.route('/update_profile/<int:id>', methods = ['GET', 'POST'])
-@login_required
-def update_profile_web(id):
-    User_to_update = UserModel.get_by_id(data_base, id)
-    if request.method == 'POST':
-        user = User (id, request.form['nombre'], request.form['usuario'], request.form['password'], request.form['e-mail'], User_to_update.profile_pic)
-        if UserModel.update_profile(user, data_base):
-            if current_user.id != 1:
-                return redirect(url_for('logout'))
-            else:
-                return redirect(url_for('users'))
-    else:
-        return render_template('update_profile.html', user_info = User_to_update)
-
-
-#USUARIOS
-@app.route('/users')
-def users():
-    users_list = UserModel.get_all_users(data_base)
-    return render_template('usuarios.html', users_list = users_list)
-
-#BORRAR USUARIOS
-@app.route('/delete_users/<int:id>')
-def delete_user_id(id):
-    UserModel.delete_user(data_base, id)
-    return redirect(url_for('users'))
-
-#PRODUCTOS
-@app.route('/products')
-def products():
-    products_list = UserProductModel.get_all_products(data_base)
-    usuarios = UserModel.get_all_users(data_base)
-    return render_template('productos.html', products = products_list, usuarios = usuarios)
-
-#BORRAR PRODUCTOS
-@app.route('/delete_product/<int:id>')
-def delete_product_id(id):
-    ProductModel.delete_product(data_base, id)
-    return redirect(url_for('products'))
-#COMPRAR PRODUCTOS
-@app.route('/buy_product/<int:id>')
-def buy_product(id):
-    ProductModel.update_status(data_base, current_user.id, id)
-    return redirect(url_for('products'))
-
-#AÑADIR PRODUCTO
-@app.route('/add_product', methods = ['GET', 'POST'])
-def add_product():
-    if request.method == 'POST':
-        file = request.files['imagen']
-        producto = Product(0, current_user.id, request.form['nombre'], request.form['descripcion'], request.form['precio'], file.filename, 0, 0)
-        ProductModel.create_product(data_base, producto)
-        
-        file.save(os.path.join(app.config['PRODUCTS_UPLOAD_FOLDER'], file.filename)) #Guarda imagen
-        return redirect(url_for('products'))
-    else:
-        return render_template('create_product.html')
-
-#ACTUALIZAR PRODUCTO
-@app.route('/update_product/<int:id>', methods = ['GET', 'POST'])
-def update_product(id):
-    if request.method == 'POST':
-        producto = ProductModel.get_by_id(data_base, id)
-        producto.precio = request.form['precio']
-        ProductModel.update_product(data_base, producto)
-        return redirect(url_for('products'))
-    else:
-        return render_template('update_product.html', product_info = ProductModel.get_by_id(data_base, id))
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-'''
+        return render_template('404.html')
+    return render_template('local_info.html', local = local, id = local_id)
 
 @app.errorhandler(404)
 def pagina_no_encontrada(error):
     return render_template('404.html'), 404
 
-'''
-@app.errorhandler(401)
-def error_401(error):
-    return redirect(url_for('login'))
-'''
 if __name__ == '__main__':
     app.run(debug = True)

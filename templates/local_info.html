@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Detalles del Local
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/locales_tablas2.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="heading">Información del Local</h1>
+        {% if local %}
+            <div class="local-info">
+                <h3>Dirección: {{ local.direccion }}</h3>
+            </div>
+            <h2>Distribución de Mesas</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>ID Mesa Billar</th>
+                        <th>ID Mesa Comida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mesa in local.mesas %}
+                        <tr>
+                            <td>{{ mesa.nombre }}</td>
+                            <td>{{ mesa.id_mesa_billar }}</td>
+                            <td>{{ mesa.id_mesa_comida }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Local no encontrado.</p>
+        {% endif %}
+        <a href="{{ url_for('locales') }}" class="btn">Volver a la lista de locales</a>
+    </div>
+{% endblock %}

@@ -242,3 +242,18 @@ class MontoTotal:
         self.monto_mesa = monto_mesa
         self.monto_consumible = monto_consumible
         self.monto_total = monto_total
+
+class InfoLocal:
+    id_local=0
+    direccion=""
+    nombre=""
+    id_mesa_billar=0
+    id_mesa_comida=0
+    def __init__(self, id_local,direccion, nombre, id_mesa_billar, id_mesa_comida):
+        self.id_local=id_local
+        self.direccion = direccion
+        self.nombre = nombre
+        self.id_mesa_billar = id_mesa_billar 
+        self.id_mesa_comida = id_mesa_comida 
+    def __repr__(self):
+        return f"InfoLocal(id_local={self.id_local}, direccion={self.direccion}, nombre={self.nombre}, id_mesa_billar={self.id_mesa_billar}, id_mesa_comida={self.id_mesa_comida})"

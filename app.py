@@ -13,6 +13,8 @@ from models.producto import Product
 import os
 
 import models.clases_model_select as selector
+import models.clases_model_insert as selector3
+import models.clases as selector2
 
 MYSQL_HOST = 'localhost'
 MYSQL_USER = 'root'
@@ -92,7 +94,42 @@ def pagos():
 #comidas
 @app.route('/comidas')
 def comidas():
-    return render_template('comidas.html')
+    clientes_arr = selector.get_all_clientes(data_base)
+    for cliente in clientes_arr:
+        print(cliente.id, "   " ,cliente.nombre, "  " ,cliente.apellidos, "  " ,cliente.tipo, "  " ,cliente.id_mesa_billar, "  " ,cliente.id_pago_com, "  ",cliente.id_mesa_comida)
+    return render_template('comidas.html', clientes = clientes_arr)
+
+@app.route('/select-consumables/<int:cliente_id>', methods=['GET', 'POST'])
+def select_consumables(cliente_id):
+    consumibles = selector.get_all_consumibles(data_base)
+    return render_template('select_consumables.html', cliente=cliente_id, consumibles=consumibles)
+
+
+@app.route('/guardar-detalle-pedido', methods=['POST'])
+def guardar_detalle_pedido():
+    cliente_id = request.form.get('cliente_id')
+    seleccionados = request.form.getlist('consumibles')
+
+    if not cliente_id or not seleccionados:
+        return redirect(url_for('comidas'))
+
+
+    pedido_consumible_obj = selector2.PedidoConsumible(0,1,cliente_id, 0)
+    selector3.create_pedido_consumible(data_base, pedido_consumible_obj)
+
+    cursor = data_base.connection.cursor()
+    cursor.execute("SELECT LAST_INSERT_ID();")
+    id_pedido_consumible = cursor.fetchone()[0]
+    
+    for consumible_id in seleccionados:
+        pedido_consumible_consumible_obj = selector2.PedidoConsumible_Consumible(
+            consumible_id, id_pedido_consumible
+        )
+        selector3.create_pedido_consumible_consumible(data_base, pedido_consumible_consumible_obj)
+
+
+    data_base.connection.commit()
+    return redirect(url_for('comidas'))
 
 
 '''

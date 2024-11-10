@@ -223,3 +223,22 @@ class PedidoConsumible_Consumible:
     def __init__(self, id_consumible, id_pedido_consumible):
         self.id_consumible = id_consumible
         self.id_pedido_consumible = id_pedido_consumible
+
+class MontoTotal:
+    id_pago = 0
+    id_pago_com = 0
+    precio_hora = 0
+    hora_inicio = ""
+    hora_fin = ""
+    monto_mesa = 0
+    monto_consumible = 0
+    monto_total = 0
+    def __init__(self, id_pago, id_pago_com, precio_hora, hora_inicio, hora_fin, monto_mesa, monto_consumible, monto_total):
+        self.id_pago = id_pago
+        self.id_pago_com = id_pago_com
+        self.precio_hora = precio_hora
+        self.hora_inicio = hora_inicio
+        self.hora_fin = hora_fin
+        self.monto_mesa = monto_mesa
+        self.monto_consumible = monto_consumible
+        self.monto_total = monto_total

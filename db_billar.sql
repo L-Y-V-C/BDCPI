@@ -29,11 +29,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_clientes` ()   BEGIN
 	SELECT * FROM cliente;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_cliente_by_id` (IN `cliente_id` INTEGER)   BEGIN
+    SELECT * FROM cliente
+    WHERE cliente.IDCliente = cliente_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_consumibles` ()   BEGIN
 	SELECT * FROM consumible;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `get_all_locales` ()   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_locales` ()   BEGIN
 	SELECT * FROM tlocal;
 END$$
 

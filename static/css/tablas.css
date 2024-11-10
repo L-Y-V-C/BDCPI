@@ -16,6 +16,20 @@ body
     background: url(https://imagenes.eltiempo.com/files/image_1200_600/uploads/2023/02/22/63f6e929c1004.jpeg) center / cover;
 }
 
+.sub_table
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff5;
+    backdrop-filter: blur(7px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+}
+
 main.table
 {
     margin-top: 10px;
@@ -29,7 +43,18 @@ main.table
     overflow: hidden;
 }
 
-
+main.table_local
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 50vw;
+    height: 100vh;
+    background-color: #fff5;
+    backdrop-filter: blur(7px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+}
 .table__header
 {
     width: 100%;
@@ -40,6 +65,19 @@ main.table
     justify-content: space-between;
     align-items: center;
     backdrop-filter: blur(20px);
+}
+
+.sub_table__header
+{
+    width: 100%;
+    height: 10%;
+    background-color: rgba(72, 94, 119, 0.7);
+    padding: .8rem 1rem;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    display: flex;
+    overflow: hidden;
 }
 
 td img
@@ -57,15 +95,11 @@ table, th, td
     border-collapse: collapse;
 }
 
-
-
-
 .table__body
 {
     width: 95%;
     max-height: calc(89% - .8rem);
     background-color: #fffb;
-
     margin: .8rem auto;
     border-radius: .6rem;
     overflow: auto;
@@ -123,10 +157,10 @@ tbody tr:hover
 .btn-update
 {
     padding: .5rem 1rem;
-    background-color: #0b9310de;
+    background-color: #54616f;
     color: white;
     border: none;
-    border-radius: .3rem;
+    border-radius: .4rem;
     cursor: pointer;
     transition: background-color 0.3s;
     text-decoration: none;
@@ -145,7 +179,9 @@ tbody tr:hover
 }
 .btn-update:hover
 {
-    background-color: #49a64ef1;
+    background-color: #374049;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 .btn-delete:hover
 {
@@ -175,7 +211,8 @@ tbody tr:hover
 {
     background-color: #ebc474;
 }
-.flash-messages {
+.flash-messages
+{
     background-color: #f8d7da;
     color: #721c24;
     padding: 10px;

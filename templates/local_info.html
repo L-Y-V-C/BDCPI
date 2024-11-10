@@ -6,37 +6,44 @@
 
 {% block customCSS %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/locales_tablas2.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/normal.css') }}">
 {% endblock %}
 
 {% block body %}
+<main class="table_local" id="customers_table">
     <div class="container">
         <h1 class="heading">Información del Local</h1>
+        <img id="foto" src="{{ url_for('static', filename='img/icono' ~ id ~ '.png') }}" alt="Icono Local {{ id }}">
         {% if local %}
             <div class="local-info">
                 <h3>Dirección: {{ local.direccion }}</h3>
             </div>
             <h2>Distribución de Mesas</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>ID Mesa Billar</th>
-                        <th>ID Mesa Comida</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for mesa in local.mesas %}
+            <section class="table__body">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ mesa.nombre }}</td>
-                            <td>{{ mesa.id_mesa_billar }}</td>
-                            <td>{{ mesa.id_mesa_comida }}</td>
+                            <th class="header-text">Nombre</th>
+                            <th class="header-text">Id Mesa Billar</th>
+                            <th class="header-text">Id Mesa Comida</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for mesa in local.mesas %}
+                            <tr>
+                                <td>{{ mesa.nombre }}</td>
+                                <td>{{ mesa.id_mesa_billar }}</td>
+                                <td>{{ mesa.id_mesa_comida }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
         {% else %}
             <p>Local no encontrado.</p>
         {% endif %}
-        <a href="{{ url_for('locales') }}" class="btn">Volver a la lista de locales</a>
+        <a href="{{ url_for('locales') }}" style="width: 100%;" class="btn">Volver a la lista de locales</a>
     </div>
+</main>
 {% endblock %}

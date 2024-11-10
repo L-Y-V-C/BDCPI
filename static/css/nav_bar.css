@@ -32,8 +32,7 @@
     font-weight: bold;
     font-family: Arial, sans-serif;
 }
-.nav_bar ul li a:hover,
-.nav_bar ul li a.cerrar-sesion:hover
+.nav_bar ul li a:hover
 {
-    color: rgb(67, 66, 66);
+    color: #cbc9c9;
 }

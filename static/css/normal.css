@@ -111,6 +111,7 @@ body
     width: 130px;
     height: 130px;
     border-radius: 50%;
+    object-fit: cover;
 }
 #file
 {
@@ -215,6 +216,11 @@ body
     font-weight: 600;
 }
 
+.a-ref:hover
+{
+    color: #cecdcd;
+}
+
 .btn
 {
     width: 30%;
@@ -227,6 +233,13 @@ body
     background: linear-gradient(195deg, rgba(30,62,98,1) 0%, rgba(72,122,177,1) 100%);
     color: white;
     margin-top: 15px;
+}
+
+.btn:hover
+{
+    background: linear-gradient(195deg, rgba(72, 122, 177, 1) 0%, rgba(30, 62, 98, 1) 100%);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
 input[type = "checkbox"]

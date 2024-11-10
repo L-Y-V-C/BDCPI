@@ -29,7 +29,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_clientes` ()   BEGIN
 	SELECT * FROM cliente;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `get_all_consumibles` ()   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_consumibles` ()   BEGIN
 	SELECT * FROM consumible;
 END$$
 
@@ -49,7 +49,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_propietario_casillero` ()  
 	SELECT CONCAT(c.Nombre,' ',c.Apellidos) AS 'Nombre y Apellidos',ca.Numero AS 'Numero casillero' FROM cliente AS c INNER JOIN casillero AS ca ON c.IDCliente=ca.IDCasillero;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `get_all_stock` (IN `id` INT)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_stock` (IN `id` INT)   BEGIN
 	SELECT consumible.Stock FROM consumible WHERE consumible.IDConsumible=id;
 END$$
 
@@ -133,7 +133,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_mesabillar` (IN `id` INT, IN
 	UPDATE mesabillar SET mesabillar.Tipo=tip,mesabillar.Estado=Est,mesabillar.IDMantenimiento=Idman,mesabillar.IDPagoCOM=IdPago,mesabillar.IDAmbiente=IdAm WHERE mesabillar.IDMesaBillar=id;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `update_Stock` (IN `id` INT)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_Stock` (IN `id` INT)   BEGIN
 	UPDATE consumible SET consumible.Stock=consumible.Stock - 1 WHERE consumible.IDConsumible=id;
 END$$
 

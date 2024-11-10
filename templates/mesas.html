@@ -9,8 +9,6 @@
 {% endblock %}
 {% block body %}
 
-
-
 <main class="table" id="customers_table">
     <section class="table__header">
         <h1 style="color: white;">Mesas</h1>
@@ -28,9 +26,9 @@
             <tbody>
                 {% for mesa in mesas %}
                     <tr>
-                        <td style="width: 10%;">{{ mesa.id }}</td>
-                        <td style="width: 30%;">{{ mesa.tipo }}</td>
-                        <td style="width: 30%;">
+                        <td>{{ mesa.id }}</td>
+                        <td>{{ mesa.tipo }}</td>
+                        <td>
                             {% if mesa.estado == "En uso" %}
                                 <div class="status-box red">En uso</div>
                             {% elif mesa.estado == "Mantenimiento" %}
@@ -38,10 +36,11 @@
                             {% else %}
                                 <div class="status-box green">Disponible</div>
                             {% endif %}
-                            
                         </td>
                         <td>
-                            <a href="/update_mesa/{{mesa.id}}" class="btn-update" style="margin-bottom: 20px;">Actualizar</a>
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                                <a href="/update_mesa/{{mesa.id}}" class="btn-update">Actualizar</a>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}

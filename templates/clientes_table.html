@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    MESAS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Clientes</h1>
+        <div class="registrar">
+            <a href="/registrar_cliente" class="a-ref">Añadir cliente</a>
+        </div>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id</th>
+                    <th class="header-text">Nombre</th>
+                    <th class="header-text">Apellidos</th>
+                    <th class="header-text">Tipo</th>
+                    <th class="header-text"> IDMesaBillar </th>
+                    <th class="header-text"> IDPagoCOM </th>
+                    <th class="header-text"> IDMesaComida </th>
+                    <th class="header-text"> Acciones </th>
+                    <th class="header-text"> Montos </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                    <tr>
+                        <td>{{ cliente.id }}</td>
+                        <td>{{ cliente.nombre }}</td>
+                        <td>{{ cliente.apellidos }}</td>
+                        <td>{{ cliente.tipo }}</td>
+                        <td>{% if cliente.id_mesa_billar is not none %}
+                                {{ cliente.id_mesa_billar }}
+                            {% endif %} </td>
+                        <td>{% if cliente.id_pago_com is not none %}
+                                {{ cliente.id_pago_com }}
+                            {% endif %} </td>
+                        <td>{% if cliente.id_mesa_comida is not none %}
+                                {{ cliente.id_mesa_comida }}
+                            {% endif %} </td>
+
+                        <td>
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                                <a href="/update_cliente/{{cliente.id}}" class="btn-update">Editar</a>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                                <a href="/montos_cliente/{{ cliente.id }}" class="btn-update">Ver Montos</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

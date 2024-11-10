@@ -5,7 +5,7 @@ def create_cliente(data_base, cliente_obj):
         cliente_obj.id_mesa_billar, cliente_obj.id_pago_com, cliente_obj.id_mesa_comida)
     cursor.execute(sql_command)
     data_base.connection.commit()
-
+    
 def create_casillero(data_base, casillero_obj):
     cursor = data_base.connection.cursor()
     sql_command = """CALL db_billar.insert_casillero('{}', '{}');""".format(

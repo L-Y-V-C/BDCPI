@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2024 at 06:22 AM
+-- Generation Time: Nov 11, 2024 at 12:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -25,40 +25,16 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `CalcularMontos` ()   BEGIN
-    SELECT 
-        p.IDPago, 
-        com.IDPagoCOM, 
-        com.PrecioHora, 
-        com.HoraInicio, 
-        com.HoraFin, 
-        pc.IDPedidoConsumible,
-        c.IDConsumible,
-        c.Nombre, 
-        c.Precio, 
-        pc.Cantidad,
-        (EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
-        + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
-        - EXTRACT(MINUTE FROM com.HoraInicio)/60.0) * com.PrecioHora AS MontoMesa,
-        pc.Cantidad * c.Precio AS MontoConsumible,
-        ((EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
-        + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
-        - EXTRACT(MINUTE FROM com.HoraInicio)/60.0) * com.PrecioHora)
-        + (pc.Cantidad * c.Precio) AS MontoTotal
-    FROM 
-        pago p 
-    INNER JOIN 
-        checkoutmesa com ON p.IDPagoCOM = com.IDPagoCOM
-    INNER JOIN 
-        pedidoconsumible pc ON pc.IDPedidoConsumible = p.IDPedidoConsumible
-    INNER JOIN 
-        pedidoconsumible_consumible pcc ON pcc.IDPedidoConsumible = pc.IDPedidoConsumible
-    INNER JOIN 
-        consumible c ON c.IDConsumible = pcc.IDConsumible;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_clientes` ()   BEGIN
+	SELECT * FROM cliente;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_distribucion_ambientes` ()   BEGIN
-	SELECT am.Nombre,mesab.IDMesaBillar,mesacom.IdMesaComida FROM ambiente AS am INNER JOIN mesabillar AS mesab INNER JOIN mesacomida AS mesacom ON am.IDAmbiente=mesab.IDAmbiente AND am.IDAmbiente=mesacom.IDAmbiente;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_consumibles` ()   BEGIN
+	SELECT * FROM consumible;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_locales` ()   BEGIN
+	SELECT * FROM tlocal;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_mesabillar` ()   BEGIN
@@ -71,6 +47,95 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_propietario_casillero` ()   BEGIN
 	SELECT CONCAT(c.Nombre,' ',c.Apellidos) AS 'Nombre y Apellidos',ca.Numero AS 'Numero casillero' FROM cliente AS c INNER JOIN casillero AS ca ON c.IDCliente=ca.IDCasillero;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_stock` (IN `id` INT)   BEGIN
+	SELECT consumible.Stock FROM consumible WHERE consumible.IDConsumible=id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_cliente_by_id` (IN `cliente_id` INTEGER)   BEGIN
+    SELECT * FROM cliente
+    WHERE cliente.IDCliente = cliente_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_mesa_by_id` (IN `id` INT)   BEGIN
+	SELECT * FROM mesabillar WHERE mesabillar.IDMesaBillar=id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_monto_consumibles` (IN `cliente_id` INT)   BEGIN
+    SELECT 
+        p.IDPago,
+        pc.IDPedidoConsumible,
+        c.IDConsumible,
+        c.Nombre, 
+        c.Precio, 
+        pc.Cantidad,
+        (pc.Cantidad * c.Precio) AS MontoConsumible
+    FROM 
+        pago p 
+    INNER JOIN 
+        pedidoconsumible pc ON pc.IDPedidoConsumible = p.IDPedidoConsumible
+    INNER JOIN 
+        pedidoconsumible_consumible pcc ON pcc.IDPedidoConsumible = pc.IDPedidoConsumible
+    INNER JOIN 
+        consumible c ON c.IDConsumible = pcc.IDConsumible
+    WHERE 
+        pc.IDCliente = cliente_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_monto_mesa` (IN `cliente_id` INT)   BEGIN
+    SELECT 
+        p.IDPago,
+        com.IDPagoCOM, 
+        com.PrecioHora,
+        com.HoraInicio, 
+        com.HoraFin, 
+        FORMAT((EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
+        + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
+        - EXTRACT(MINUTE FROM com.HoraInicio)/60.0),2) * com.PrecioHora AS MontoMesa
+    FROM 
+        pago p 
+    INNER JOIN 
+        checkoutmesa com ON p.IDPagoCOM = com.IDPagoCOM
+    INNER JOIN
+    	cliente c ON c.IDPagoCOM = com.IDPagoCOM
+    WHERE 
+        c.IDCliente = cliente_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_monto_total_cliente` (IN `cliente_id` INT)   BEGIN
+    DECLARE MontoMesa DECIMAL(10, 2);
+    DECLARE MontoTotalConsumibles DECIMAL(10, 2);
+    SELECT 
+        (EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
+        + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
+        - EXTRACT(MINUTE FROM com.HoraInicio)/60.0) * com.PrecioHora 
+    INTO MontoMesa
+    FROM 
+        pago p 
+    INNER JOIN 
+        checkoutmesa com ON p.IDPagoCOM = com.IDPagoCOM
+    INNER JOIN
+    	cliente c ON c.IDPagoCOM = com.IDPagoCOM
+    WHERE 
+        c.IDCliente = cliente_id;
+
+    SELECT 
+        SUM(pc.Cantidad * c.Precio) 
+    INTO 
+        MontoTotalConsumibles
+    FROM 
+        pago p
+    INNER JOIN 
+        pedidoconsumible pc ON pc.IDPedidoConsumible = p.IDPedidoConsumible
+    INNER JOIN 
+        pedidoconsumible_consumible pcc ON pcc.IDPedidoConsumible = pc.IDPedidoConsumible
+    INNER JOIN 
+        consumible c ON c.IDConsumible = pcc.IDConsumible
+    WHERE 
+        pc.IDCliente = cliente_id;
+
+    SELECT MontoMesa, IFNULL(MontoTotalConsumibles, 0), (MontoMesa + IFNULL(MontoTotalConsumibles,0)) AS MontoTotal;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_ambiente` (IN `NombreAmbiente` VARCHAR(30), IN `CapacidadAmbiente` INT, IN `IDLocalAmbiente` INT)   BEGIN
@@ -86,7 +151,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_checkoutmesa` (IN `PrecioHor
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_cliente` (IN `nom` VARCHAR(30), IN `ape` VARCHAR(50), IN `tip` VARCHAR(10), IN `IdMesa` INT, IN `IdPagocom` INT(11), IN `IdMesaComida` INT)   BEGIN
-	INSERT INTO cliente VALUES(0,nom,ape,tip,NULL,NULL,NULL);
+	INSERT INTO cliente VALUES(0,nom,ape,tip,IdMesa,IdPagocom,IdMesaComida);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_consumible` (IN `PrecioConsumible` DECIMAL(10,2), IN `DescripcionConsumible` VARCHAR(50), IN `NombreConsumible` VARCHAR(30), IN `StockConsumible` INT)   BEGIN
@@ -133,8 +198,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pago` (IN `MetodoPago` VARCH
     INSERT INTO pago (Metodo, IDPedidoConsumible, IDPagoCOM) VALUES (0,MetodoPago, IDPedidoConsumiblePago, IDPagoCOM);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pedidoConsumible` (IN `CantidadConsumible` INT, IN `IDClienteConsumible` INT, IN `IDLocalConsumible` INT)   BEGIN
-    INSERT INTO pedidoconsumible (Cantidad, IDCliente, IDLocal) VALUES (0,CantidadConsumible, IDClienteConsumible, IDLocalConsumible);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pedidoconsumible` (IN `CantidadConsumible` INT, IN `IDClienteConsumible` INT, IN `IDLocalConsumible` INT)   BEGIN
+    INSERT INTO pedidoconsumible (IDPedidoConsumible,Cantidad, IDCliente, IDLocal) VALUES (0,CantidadConsumible, IDClienteConsumible, NULL);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pedidoconsumible_consumible` (IN `IDConsumiblePedido` INT, IN `IDPedidoConsumibleConsumible` INT)   BEGIN
@@ -143,6 +208,35 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_proveedor` (IN `NombreProveedor` VARCHAR(30), IN `CorreoProveedor` VARCHAR(50), IN `TipoProveedor` VARCHAR(30), IN `TelefonoProveedor` VARCHAR(9))   BEGIN
     INSERT INTO proveedor (Nombre, CorreoElectronico, Tipo, Telefono) VALUES (0,NombreProveedor, CorreoProveedor, TipoProveedor, TelefonoProveedor);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `resumen_distribucion_ambientes` ()   BEGIN
+	SELECT tl.IDLocal,tl.Direccion,am.Nombre,mesab.IDMesaBillar,mesacom.IdMesaComida FROM tlocal AS tl INNER JOIN ambiente AS am INNER JOIN mesabillar AS mesab INNER JOIN mesacomida AS mesacom ON tl.IDLocal=am.IDLocal AND am.IDAmbiente=mesab.IDAmbiente AND am.IDAmbiente=mesacom.IDAmbiente GROUP BY tl.Direccion,am.Nombre;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_mesabillar` (IN `id` INT, IN `Tip` VARCHAR(20), IN `Est` VARCHAR(20), IN `Idman` INT(11), IN `IdPago` INT(11), IN `IdAm` INT(11))   BEGIN 
+	UPDATE mesabillar SET mesabillar.Tipo=tip,mesabillar.Estado=Est,mesabillar.IDMantenimiento=Idman,mesabillar.IDPagoCOM=IdPago,mesabillar.IDAmbiente=IdAm WHERE mesabillar.IDMesaBillar=id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_PagarMontoTotal` (IN `cliente_id` INT)   BEGIN
+    UPDATE pedidoconsumible
+    SET IDCliente = NULL
+    WHERE IDCliente = cliente_id;
+
+	UPDATE mesabillar mb
+    INNER JOIN checkoutmesa com ON com.IDPagoCOM = mb.IDPagoCOM
+    INNER JOIN cliente c ON c.IDPagoCOM = com.IDPagoCOM
+    SET mb.IDPagoCOM = NULL
+    WHERE c.IDCliente = cliente_id;
+    
+    UPDATE cliente
+    SET IDPagoCOM = NULL, IDMesaBillar = NULL, IDMesaComida = NULL
+    WHERE IDCliente = cliente_id;
+    
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_Stock` (IN `id` INT)   BEGIN
+	UPDATE consumible SET consumible.Stock=consumible.Stock - 1 WHERE consumible.IDConsumible=id;
 END$$
 
 DELIMITER ;
@@ -215,11 +309,11 @@ CREATE TABLE `checkoutmesa` (
 --
 
 INSERT INTO `checkoutmesa` (`IDPagoCOM`, `PrecioHora`, `HoraFin`, `HoraInicio`, `IDLocal`) VALUES
-(1, 8.00, '11:20:00', '10:00:00', 1),
-(2, 7.00, '15:00:00', '12:00:00', 1),
+(1, 8.00, '12:30:00', '10:00:00', 1),
+(2, 7.00, '14:00:00', '12:00:00', 1),
 (3, 7.00, '16:00:00', '14:00:00', 2),
-(4, 10.00, '12:00:00', '10:00:00', 1),
-(5, 9.00, '14:00:00', '10:30:00', 2);
+(4, 10.00, '12:00:00', '10:30:00', 1),
+(5, 9.00, '14:00:00', '13:15:00', 2);
 
 -- --------------------------------------------------------
 
@@ -244,14 +338,9 @@ CREATE TABLE `cliente` (
 INSERT INTO `cliente` (`IDCliente`, `Nombre`, `Apellidos`, `Tipo`, `IDMesaBillar`, `IDPagoCOM`, `IdMesaComida`) VALUES
 (1, 'Juan', 'Martínez', 'Regular', 1, 1, NULL),
 (2, 'Ana', 'García', 'Casillero', NULL, 2, 1),
-(3, 'Luis', 'López', 'Regular', 2, NULL, NULL),
+(3, 'Luis', 'López', 'Regular', 2, 3, NULL),
 (4, 'Pedro', 'Hernández', 'Casillero', NULL, NULL, 2),
-(5, 'Marta', 'Sánchez', 'Regular', 3, NULL, NULL),
-(6, 'None', 'None', 'None', NULL, NULL, NULL),
-(7, 'None', 'None', 'None', NULL, NULL, NULL),
-(8, 'None', 'None', 'None', NULL, NULL, NULL),
-(9, 'None', 'None', 'None', NULL, NULL, NULL),
-(10, 'Luishi', 'Hitler', 'superVIP', NULL, NULL, NULL);
+(5, 'Marta', 'Sánchez', 'Regular', 3, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -272,13 +361,13 @@ CREATE TABLE `consumible` (
 --
 
 INSERT INTO `consumible` (`IDConsumible`, `Precio`, `Descripcion`, `Nombre`, `Stock`) VALUES
-(1, 5.00, 'Refresco', 'Coca-Cola', 100),
-(2, 3.50, 'Refresco', 'Sprite', 80),
-(3, 4.00, 'Snack', 'Papas', 50),
-(4, 2.00, 'Bebida energética', 'Red Bull', 75),
-(5, 6.50, 'Sándwich', 'Jamón y Queso', 30),
-(6, 2.00, 'Bebida energética', 'Red Bull', 75),
-(7, 6.50, 'Sándwich', 'Jamón y Queso', 30);
+(1, 5.00, 'Refresco', 'Coca-Cola', 99),
+(2, 3.50, 'Refresco', 'Sprite', 79),
+(3, 4.00, 'Snack', 'Papas', 49),
+(4, 2.00, 'Bebida energética', 'Red Bull', 68),
+(5, 6.50, 'Sándwich', 'Jamón y Queso', 19),
+(6, 2.00, 'Bebida energética', 'Red Bull', 62),
+(7, 6.50, 'Sándwich', 'Jamón y Queso', 0);
 
 -- --------------------------------------------------------
 
@@ -444,7 +533,7 @@ CREATE TABLE `mesabillar` (
 
 INSERT INTO `mesabillar` (`IDMesaBillar`, `Tipo`, `Estado`, `IDMantenimiento`, `IDPagoCOM`, `IDAmbiente`) VALUES
 (1, 'Normal', 'Disponible', NULL, NULL, 1),
-(2, 'Normal', 'En uso', NULL, 1, 1),
+(2, 'arroz', 'ocupado', 3, 2, 1),
 (3, 'Carambola', 'Mantenimiento', 3, NULL, 2),
 (4, 'Normal', 'Disponible', NULL, NULL, 1),
 (5, 'Americana', 'Disponible', NULL, NULL, NULL),
@@ -521,7 +610,31 @@ CREATE TABLE `pedidoconsumible` (
 INSERT INTO `pedidoconsumible` (`IDPedidoConsumible`, `Cantidad`, `IDCliente`, `IDLocal`) VALUES
 (1, 3, 1, 1),
 (2, 2, 2, 1),
-(3, 5, 3, 2);
+(3, 5, 4, 2),
+(5, 1, 4, 1),
+(6, 1, 4, 1),
+(7, 1, 4, 1),
+(8, 1, 1, 1),
+(9, 1, 1, NULL),
+(10, 1, 1, NULL),
+(11, 1, 2, NULL),
+(12, 1, 2, NULL),
+(13, 1, 2, NULL),
+(14, 1, 2, NULL),
+(15, 1, 5, NULL),
+(16, 1, 5, NULL),
+(17, 1, 5, NULL),
+(18, 1, 5, NULL),
+(19, 1, 5, NULL),
+(20, 1, 5, NULL),
+(21, 1, 2, NULL),
+(22, 1, 2, NULL),
+(23, 1, 4, NULL),
+(24, 1, 2, NULL),
+(25, 1, 5, NULL),
+(26, 1, 1, NULL),
+(27, 1, 1, NULL),
+(28, 1, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -540,8 +653,53 @@ CREATE TABLE `pedidoconsumible_consumible` (
 
 INSERT INTO `pedidoconsumible_consumible` (`IDConsumible`, `IDPedidoConsumible`) VALUES
 (1, 1),
+(1, 2),
+(1, 3),
+(1, 7),
+(1, 8),
+(1, 9),
+(1, 13),
 (2, 1),
-(3, 2);
+(2, 5),
+(2, 6),
+(2, 7),
+(2, 8),
+(2, 9),
+(2, 13),
+(3, 2),
+(3, 8),
+(3, 12),
+(4, 8),
+(4, 10),
+(4, 11),
+(4, 12),
+(4, 21),
+(4, 22),
+(4, 23),
+(5, 10),
+(5, 11),
+(5, 12),
+(5, 21),
+(5, 22),
+(5, 23),
+(5, 26),
+(5, 28),
+(6, 10),
+(6, 18),
+(6, 21),
+(6, 22),
+(6, 23),
+(6, 25),
+(6, 26),
+(6, 27),
+(6, 28),
+(7, 14),
+(7, 15),
+(7, 16),
+(7, 17),
+(7, 19),
+(7, 20),
+(7, 24);
 
 -- --------------------------------------------------------
 
@@ -754,7 +912,7 @@ ALTER TABLE `checkoutmesa`
 -- AUTO_INCREMENT for table `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `IDCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `IDCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `consumible`
@@ -802,7 +960,7 @@ ALTER TABLE `pago`
 -- AUTO_INCREMENT for table `pedidoconsumible`
 --
 ALTER TABLE `pedidoconsumible`
-  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `proveedor`

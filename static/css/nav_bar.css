@@ -1,8 +1,9 @@
 .nav_bar
 {
-    background: linear-gradient(90deg, rgba(230,100,100,1) 0%, rgba(227,97,131,1) 100%);
-    padding: 15px 0; 
+    background-color: #24252A;
+    padding: 15px 0;
     border-radius: 10px;
+    width: 100%;
 }
 
 .nav_bar ul
@@ -31,8 +32,7 @@
     font-weight: bold;
     font-family: Arial, sans-serif;
 }
-.nav_bar ul li a:hover,
-.nav_bar ul li a.cerrar-sesion:hover
+.nav_bar ul li a:hover
 {
-    color: rgb(67, 66, 66);
+    color: #cbc9c9;
 }

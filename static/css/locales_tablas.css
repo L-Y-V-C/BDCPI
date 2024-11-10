@@ -1,0 +1,94 @@
+body
+{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    backdrop-filter: blur(7px);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.container
+{
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+.box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.box {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+.box h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+}
+
+.box p {
+    font-size: 1em;
+    color: #555;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+.local-info {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.box img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+}
+body
+{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url(https://imagenes.eltiempo.com/files/image_1200_600/uploads/2023/02/22/63f6e929c1004.jpeg) center / cover;
+}
+.heading {
+    width: 100%;
+    height: 10%;
+    background-color: rgba(30, 62, 98, 0.7);
+    padding: .8rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    color: white;
+    font-size: 2rem;
+    border-radius: 8px;
+}
+

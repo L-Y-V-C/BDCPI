@@ -1,0 +1,102 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body
+{
+    height: 100vh;
+    background-color: #f4f4f4;
+    background: url(https://imagenes.eltiempo.com/files/image_1200_600/uploads/2023/02/22/63f6e929c1004.jpeg) center / cover no-repeat;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container
+{
+    width: 95%;
+    height: 95%;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(200, 199, 199, 0.2);
+    backdrop-filter: blur(7px);
+    border-radius: 8px;
+    box-shadow: 0 .4rem .8rem #0005;
+    text-align: center;
+    
+}
+
+
+.heading {
+    font-size: 2rem;
+    color: white;
+    width: 100%;
+    padding: 1rem;
+    background-color: rgba(30, 62, 98, 0.7);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+}
+
+
+.table-title
+{
+    color: #007BFF;
+    font-size: 1.5rem;
+    text-align: left;
+    margin: 20px 0 10px;
+}
+
+.table
+{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #007BFF;
+    color: white;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.local-info
+{
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}

@@ -116,6 +116,15 @@ tbody tr
     background: rgba(181, 203, 232, 0.129);
 }
 
+table tbody tr:nth-child(odd)
+{
+    background-color: #D4D0CF;
+}
+table tbody tr:nth-child(even)
+{
+    background-color: #bebebe;
+}
+
 tbody tr.hide
 {
     opacity: 0;
@@ -273,6 +282,8 @@ td img
     vertical-align: middle;
     border-radius: 50%;
 }
+
+
 
 .status-box
 {

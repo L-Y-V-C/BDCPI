@@ -6,18 +6,21 @@
 
 {% block customCSS %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
 {% endblock %}
 
 {% block body %}
-<main class="table" id="consumables_table">
+<main class="table" id="customers_table">
     <section class="table__header">
-        <h1>Seleccionar Consumibles para el Cliente</h1>
-        <p>Cliente ID: {{ cliente }}</p>
+        <h1 style="color: white;">Seleccionar Consumibles para el Cliente</h1>
+        <h3 style="color: white;">Cliente ID: {{ cliente }}</h3>
     </section>
-    <section class="table__body">
-        <form method="POST" action="{{ url_for('guardar_detalle_pedido') }}">
-            <input type="hidden" name="cliente_id" value="{{ cliente }}">
 
+    <section class="table__body">
+
+        <form method="POST" action="{{ url_for('guardar_detalle_pedido') }}" id="pedido-form">
+            <input type="hidden" name="cliente_id" value="{{ cliente }}">
             <table>
                 <thead>
                     <tr>
@@ -37,15 +40,31 @@
                             <td>{{ consumible.descripcion }}</td>
                             <td>{{ consumible.precio }}</td>
                             <td>{{ consumible.stock }}</td>
-                            <td>
+                            <td style="display: flex; justify-content: center; align-items: center;">
                                 <input type="checkbox" name="consumibles" value="{{ consumible.id }}">
                             </td>
+                            
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            <button type="submit" class="btn-submit">Confirmar Pedido</button>
+
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <button type="submit" class="btn" id="submit-btn">Confirmar Pedido</button>
+            </div>
+            
         </form>
     </section>
 </main>
+
+<script>
+    document.getElementById('pedido-form').addEventListener('submit', function(event) {
+        var checkboxes = document.querySelectorAll('input[name="consumibles"]:checked');
+        if (checkboxes.length === 0) {
+            event.preventDefault();
+            alert('Por favor, selecciona al menos un consumible.');
+        }
+    });
+</script>
+
 {% endblock %}

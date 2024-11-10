@@ -25,6 +25,9 @@
                     <th class="header-text">Nombre</th>
                     <th class="header-text">Apellidos</th>
                     <th class="header-text">Tipo</th>
+                    <th class="header-text"> IDMesaBillar </th>
+                    <th class="header-text"> IDPagoCOM </th>
+                    <th class="header-text"> IDMesaComida </th>
                     <th class="header-text">Acciones</th>
                 </tr>
             </thead>
@@ -35,7 +38,17 @@
                         <td>{{ cliente.nombre }}</td>
                         <td>{{ cliente.apellidos }}</td>
                         <td>{{ cliente.tipo }}</td>
-                        <td>
+                        <td>{% if cliente.id_mesa_billar is not none %}
+                                {{ cliente.id_mesa_billar }}
+                            {% endif %} </td>
+                        <td>{% if cliente.id_pago_com is not none %}
+                                {{ cliente.id_pago_com }}
+                            {% endif %} </td>
+                        <td>{% if cliente.id_mesa_comida is not none %}
+                                {{ cliente.id_mesa_comida }}
+                            {% endif %} </td>
+
+                        <td style="display: flex; justify-content: center; align-items: center;">
                             <a href="/update_cliente/{{cliente.id}}" class="btn-update" style="margin-bottom: 20px;">Editar</a>
                         </td>
                     </tr>

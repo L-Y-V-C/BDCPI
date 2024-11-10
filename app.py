@@ -171,11 +171,18 @@ def guardar_detalle_pedido():
 
     data_base.connection.commit()
     return redirect(url_for('comidas'))
-#pagos
-@app.route('/montos')
-def montos():
-    montos_arr = selector.get_pagos(data_base)
-    return render_template('pagos.html', montos = montos_arr)
+
+#PAGOS
+@app.route('/montos_cliente/<int:cliente_id>', methods=['GET', 'POST'])
+def montos_cliente(cliente_id):
+    monto_mesa = selector.get_monto_mesa(data_base, cliente_id)
+    monto_consumibles = selector.get_monto_consumibles(data_base, cliente_id)
+    monto_total = selector.get_monto_total_cliente(data_base, cliente_id)
+    return render_template('pagos.html', 
+                           monto_mesa = monto_mesa, 
+                           monto_consumibles = monto_consumibles, 
+                           monto_total = monto_total)
+
 
 
 @app.route('/local')

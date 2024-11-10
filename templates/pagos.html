@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Montos Calculados
+    MONTO CLIENTE
 {% endblock %}
 
 {% block customCSS %}
@@ -14,40 +14,72 @@
         <h1 style="color: white;">Montos Calculados</h1>
     </section>
     <section class="table__body">
+        <h2>Monto de la Mesa</h2>
         <table>
             <thead>
                 <tr>
-                    <th class="header-text">ID Pago</th>
-                    <th class="header-text">ID Pago COM</th>
-                    <th class="header-text">Precio Hora</th>
-                    <th class="header-text">Hora Inicio</th>
-                    <th class="header-text">Hora Fin</th>
-                    <th class="header-text">Monto Mesa</th>
-                    <th class="header-text">Monto Consumible</th>
-                    <th class="header-text">Monto Total</th>
-                    <th class="header-text">Acciones</th>
+                    <th class="header-text"> Precio Hora </th>
+                    <th class="header-text"> Hora Inicio </th>
+                    <th class="header-text"> Hora Fin </th>
+                    <th class="header-text"> Monto Mesa </th>
                 </tr>
             </thead>
             <tbody>
-                {% for monto in montos %}
-                    <tr>
-                        <td>{{ monto.id_pago }}</td>
-                        <td>{{ monto.id_pago_com }}</td>
-                        <td>{{ monto.precio_hora }}</td>
-                        <td>{{ monto.hora_inicio }}</td>
-                        <td>{{ monto.hora_fin }}</td>
-                        <td>{{ monto.monto_mesa }}</td>
-                        <td>{{ monto.monto_consumible }}</td>
-                        <td>{{ monto.monto_total }}</td>
-                        <td>
-                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
-                                <a href="/pagar/{{ monto.id_pago }}" class="btn-update">Pagar</a>
-                            </div>
-                        </td>
-                    </tr>
+                <tr>
+                    <td> {{ monto_mesa.PrecioHora }} </td>
+                    <td> {{ monto_mesa.HoraInicio }} </td>
+                    <td> {{ monto_mesa.HoraFin }} </td>
+                    <td> {{ monto_mesa.MontoMesa }} </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Monto de Consumibles</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Consumible</th>
+                    <th class="header-text">Cantidad</th>
+                    <th class="header-text">Precio</th>
+                    <th class="header-text">Monto Consumible</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for consumible in monto_consumibles %}
+                <tr>
+                    <td>{{ consumible.Nombre }}</td>
+                    <td>{{ consumible.Cantidad }}</td>
+                    <td>{{ consumible.Precio }}</td>
+                    <td>{{ consumible.MontoConsumible }}</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        <h2>Monto Final</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text"> Monto Mesa </th>
+                    <th class="header-text"> Monto Consumibles </th>
+                    <th class="header-text"> Monto Total </th>
+                    <th class="header-text"> Pagar </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> {{ monto_total.MontoMesa }} </td>
+                    <td> {{ monto_total.MontoConsumible }} </td>
+                    <td> {{ monto_total.MontoTotal }} </td>
+                    <td>
+                        <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                            <a href="" class="btn-update">Pagar</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
     </section>
 </main>
 {% endblock %}

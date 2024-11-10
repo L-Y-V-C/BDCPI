@@ -224,24 +224,30 @@ class PedidoConsumible_Consumible:
         self.id_consumible = id_consumible
         self.id_pedido_consumible = id_pedido_consumible
 
+class MontoMesa:
+    def __init__(self, IDPago, IDPagoCOM, PrecioHora, HoraInicio, HoraFin, MontoMesa):
+        self.IDPago = IDPago
+        self.IDPagoCOM = IDPagoCOM
+        self.PrecioHora = PrecioHora
+        self.HoraInicio = HoraInicio
+        self.HoraFin = HoraFin
+        self.MontoMesa = MontoMesa
+
+class MontoConsumible:
+    def __init__(self, IDPago, IDPedidoConsumible, IDConsumible, Nombre, Precio, Cantidad, MontoConsumible):
+        self.IDPago = IDPago
+        self.IDPedidoConsumible = IDPedidoConsumible
+        self.IDConsumible = IDConsumible
+        self.Nombre = Nombre
+        self.Precio = Precio
+        self.Cantidad = Cantidad
+        self.MontoConsumible = MontoConsumible
+
 class MontoTotal:
-    id_pago = 0
-    id_pago_com = 0
-    precio_hora = 0
-    hora_inicio = ""
-    hora_fin = ""
-    monto_mesa = 0
-    monto_consumible = 0
-    monto_total = 0
-    def __init__(self, id_pago, id_pago_com, precio_hora, hora_inicio, hora_fin, monto_mesa, monto_consumible, monto_total):
-        self.id_pago = id_pago
-        self.id_pago_com = id_pago_com
-        self.precio_hora = precio_hora
-        self.hora_inicio = hora_inicio
-        self.hora_fin = hora_fin
-        self.monto_mesa = monto_mesa
-        self.monto_consumible = monto_consumible
-        self.monto_total = monto_total
+    def __init__(self, MontoMesa, MontoConsumible, MontoTotal):
+        self.MontoMesa = MontoMesa
+        self.MontoConsumible = MontoConsumible
+        self.MontoTotal = MontoTotal
 
 class InfoLocal:
     id_local=0
@@ -257,3 +263,6 @@ class InfoLocal:
         self.id_mesa_comida = id_mesa_comida 
     def __repr__(self):
         return f"InfoLocal(id_local={self.id_local}, direccion={self.direccion}, nombre={self.nombre}, id_mesa_billar={self.id_mesa_billar}, id_mesa_comida={self.id_mesa_comida})"
+
+    
+

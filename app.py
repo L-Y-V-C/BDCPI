@@ -132,14 +132,23 @@ def guardar_detalle_pedido():
 #PAGOS
 @app.route('/montos_cliente/<int:cliente_id>', methods=['GET', 'POST'])
 def montos_cliente(cliente_id):
+    cliente = selector.get_cliente_by_id(data_base, cliente_id)
     monto_mesa = selector.get_monto_mesa(data_base, cliente_id)
     monto_consumibles = selector.get_monto_consumibles(data_base, cliente_id)
     monto_total = selector.get_monto_total_cliente(data_base, cliente_id)
     return render_template('pagos.html', 
                            monto_mesa = monto_mesa, 
                            monto_consumibles = monto_consumibles, 
-                           monto_total = monto_total)
+                           monto_total = monto_total,
+                           cliente = cliente)
 
+#REALIZAR PAGO
+@app.route('/realizarPago/<int:cliente_id>', methods=['GET', 'POST'])
+def realizar_pago(cliente_id):
+    updater.pagar_monto_total(data_base, cliente_id)
+    return render_template('clientes_table.html')
+
+#LOCALES
 @app.route('/local')
 def locales():
     locales_arr = selector.get_all_locales(data_base)

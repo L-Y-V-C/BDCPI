@@ -32,3 +32,9 @@ def update_Stock (data_base, mesa_obj):
     )
     cursor.execute(sql_command)
     data_base.connection.commit()
+
+def pagar_monto_total(data_base, cliente_id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.update_PagarMontoTotal({});""".format(cliente_id)
+    cursor.execute(sql_command)
+    data_base.connection.commit()

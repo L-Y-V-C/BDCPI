@@ -1,5 +1,3 @@
-import models.clases
-
 def create_cliente(data_base, cliente_obj):
     cursor = data_base.connection.cursor()
     sql_command = """CALL insert_cliente('{}', '{}', '{}', '{}', '{}', '{}');""".format(

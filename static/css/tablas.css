@@ -295,3 +295,9 @@ td img
     color: #fff;
 }
 
+.status-box.yellow
+{
+    background-color: rgb(210, 210, 75);
+    color: #fff;
+}
+

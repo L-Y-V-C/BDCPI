@@ -16,20 +16,18 @@
             <table>
                 <thead>
                     <tr>
-                        <th class="header-text"> Id </th>
-                        <th class="header-text"> Tipo </th>
-                        <th class="header-text"> Estado </th>
-                        <th class="header-text"> Acciones </th>
+                        <th class="header-text">Id</th>
+                        <th class="header-text">Tipo</th>
+                        <th class="header-text">Estado</th>
+                        <th class="header-text">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for mesa in mesas %}
                         <tr>
-                            <td> {{ mesa.id }} </td>
-                            <td>
-                                {{ mesa.tipo }}
-                            </td>
-                            <td>
+                            <td style="width: 10%;">{{ mesa.id }}</td>
+                            <td style="width: 30%;">{{ mesa.tipo }}</td>
+                            <td style="width: 30%;">
                                 {% if mesa.estado == "En uso" %}
                                     <div class="status-box red">En uso</div>
                                 {% elif mesa.estado == "Mantenimiento" %}
@@ -37,9 +35,10 @@
                                 {% else %}
                                     <div class="status-box green">Disponible</div>
                                 {% endif %}
+                                
                             </td>
                             <td>
-                                <a href="#" class="btn-update" style="margin-bottom: 20px;">Actualizar</a>
+                                <a href="/update_mesa/{{mesa.id}}" class="btn-update" style="margin-bottom: 20px;">Actualizar</a>
                             </td>
                         </tr>
                     {% endfor %}

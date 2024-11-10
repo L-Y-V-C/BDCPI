@@ -13,6 +13,8 @@ from models.producto import Product
 import os
 
 import models.clases_model_select as selector
+import models.clases as clases
+import models.clases_model_update as updater
 
 MYSQL_HOST = 'localhost'
 MYSQL_USER = 'root'
@@ -79,10 +81,18 @@ def inicio():
 @app.route('/mesas')
 def mesas():
     mesas_arr = selector.get_all_mesabillar(data_base)
-    #IMPRIMIR MESAS CON print()
-    for mesa in mesas_arr:
-        print(mesa.id, "   " ,mesa.tipo, "  " ,mesa.estado)
     return render_template('mesas.html', mesas = mesas_arr)
+
+@app.route('/update_mesa/<int:id>', methods = ['GET', 'POST'])
+def update_mesa_info(id):
+    mesa_to_update = selector.get_mesa_by_id(data_base, id)
+    if request.method == 'POST':
+        mesa_to_update.estado = request.form['estado']
+        print("ESTADO: " , mesa_to_update.estado)
+        updater.update_mesa_billar(data_base, mesa_to_update)
+        return redirect(url_for('mesas'))
+    else:
+        return render_template('update_mesa.html', mesa = mesa_to_update)
 
 #pagos
 @app.route('/pagos')

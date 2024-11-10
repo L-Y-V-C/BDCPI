@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2024 at 04:11 AM
+-- Generation Time: Nov 10, 2024 at 06:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -25,6 +25,38 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CalcularMontos` ()   BEGIN
+    SELECT 
+        p.IDPago, 
+        com.IDPagoCOM, 
+        com.PrecioHora, 
+        com.HoraInicio, 
+        com.HoraFin, 
+        pc.IDPedidoConsumible,
+        c.IDConsumible,
+        c.Nombre, 
+        c.Precio, 
+        pc.Cantidad,
+        (EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
+        + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
+        - EXTRACT(MINUTE FROM com.HoraInicio)/60.0) * com.PrecioHora AS MontoMesa,
+        pc.Cantidad * c.Precio AS MontoConsumible,
+        ((EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
+        + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
+        - EXTRACT(MINUTE FROM com.HoraInicio)/60.0) * com.PrecioHora)
+        + (pc.Cantidad * c.Precio) AS MontoTotal
+    FROM 
+        pago p 
+    INNER JOIN 
+        checkoutmesa com ON p.IDPagoCOM = com.IDPagoCOM
+    INNER JOIN 
+        pedidoconsumible pc ON pc.IDPedidoConsumible = p.IDPedidoConsumible
+    INNER JOIN 
+        pedidoconsumible_consumible pcc ON pcc.IDPedidoConsumible = pc.IDPedidoConsumible
+    INNER JOIN 
+        consumible c ON c.IDConsumible = pcc.IDConsumible;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_distribucion_ambientes` ()   BEGIN
 	SELECT am.Nombre,mesab.IDMesaBillar,mesacom.IdMesaComida FROM ambiente AS am INNER JOIN mesabillar AS mesab INNER JOIN mesacomida AS mesacom ON am.IDAmbiente=mesab.IDAmbiente AND am.IDAmbiente=mesacom.IDAmbiente;
 END$$
@@ -54,7 +86,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_checkoutmesa` (IN `PrecioHor
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_cliente` (IN `nom` VARCHAR(30), IN `ape` VARCHAR(50), IN `tip` VARCHAR(10), IN `IdMesa` INT, IN `IdPagocom` INT(11), IN `IdMesaComida` INT)   BEGIN
-	INSERT INTO cliente VALUES(0,nom,ape,tip,IdMesa,IdPagocom,IdMesaComida);
+	INSERT INTO cliente VALUES(0,nom,ape,tip,NULL,NULL,NULL);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_consumible` (IN `PrecioConsumible` DECIMAL(10,2), IN `DescripcionConsumible` VARCHAR(50), IN `NombreConsumible` VARCHAR(30), IN `StockConsumible` INT)   BEGIN
@@ -214,7 +246,12 @@ INSERT INTO `cliente` (`IDCliente`, `Nombre`, `Apellidos`, `Tipo`, `IDMesaBillar
 (2, 'Ana', 'García', 'Casillero', NULL, 2, 1),
 (3, 'Luis', 'López', 'Regular', 2, NULL, NULL),
 (4, 'Pedro', 'Hernández', 'Casillero', NULL, NULL, 2),
-(5, 'Marta', 'Sánchez', 'Regular', 3, NULL, NULL);
+(5, 'Marta', 'Sánchez', 'Regular', 3, NULL, NULL),
+(6, 'None', 'None', 'None', NULL, NULL, NULL),
+(7, 'None', 'None', 'None', NULL, NULL, NULL),
+(8, 'None', 'None', 'None', NULL, NULL, NULL),
+(9, 'None', 'None', 'None', NULL, NULL, NULL),
+(10, 'Luishi', 'Hitler', 'superVIP', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -717,7 +754,7 @@ ALTER TABLE `checkoutmesa`
 -- AUTO_INCREMENT for table `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `IDCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `IDCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `consumible`

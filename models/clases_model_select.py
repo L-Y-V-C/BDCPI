@@ -16,8 +16,6 @@ def get_all_mesabillar (data_base):
         mesabillar_list.append(clases.Mesabillar(mesabillar[0], mesabillar[1], mesabillar[2], None, None, None))
     return mesabillar_list
 
-
-
 def get_all_clientes (data_base):
     cursor = data_base.connection.cursor()
     sql_command = """CALL db_billar.get_all_clientes();"""
@@ -51,3 +49,12 @@ def get_mesa_by_id(data_base, id):
     mesa = clases.Mesabillar(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
     return mesa
 
+def get_pagos(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.CalcularMontos();"""
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    monto_list = []
+    for monto in arr:
+        monto_list.append(clases.MontoTotal(monto[0], monto[1], monto[2], monto[3], monto[4], monto[5], monto[6], monto[7]))
+    return monto_list

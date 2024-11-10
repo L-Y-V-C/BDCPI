@@ -1,20 +1,51 @@
 {% extends 'layout.html' %}
+
 {% block title %}
-    pagos
+    Montos Calculados
 {% endblock %}
+
 {% block customCSS %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pagos.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
 {% endblock %}
 
 {% block body %}
- <!-- Botón en la esquina superior derecha -->
- <div class="minimize-button" onclick="handleMinimize()"></div>
-    
- <!-- Cuadrícula de recuadros -->
- <div class="grid">
-     <div class="box"></div>
-     <div class="box"></div>
-
-
- </div>
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Montos Calculados</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">ID Pago</th>
+                    <th class="header-text">ID Pago COM</th>
+                    <th class="header-text">Precio Hora</th>
+                    <th class="header-text">Hora Inicio</th>
+                    <th class="header-text">Hora Fin</th>
+                    <th class="header-text">Monto Mesa</th>
+                    <th class="header-text">Monto Consumible</th>
+                    <th class="header-text">Monto Total</th>
+                    <th class="header-text">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for monto in montos %}
+                    <tr>
+                        <td>{{ monto.id_pago }}</td>
+                        <td>{{ monto.id_pago_com }}</td>
+                        <td>{{ monto.precio_hora }}</td>
+                        <td>{{ monto.hora_inicio }}</td>
+                        <td>{{ monto.hora_fin }}</td>
+                        <td>{{ monto.monto_mesa }}</td>
+                        <td>{{ monto.monto_consumible }}</td>
+                        <td>{{ monto.monto_total }}</td>
+                        <td>
+                            <a href="/pagar/{{ monto.id_pago }}" class="btn-update">Pagar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
 {% endblock %}

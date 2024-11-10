@@ -21,10 +21,6 @@ app.config['PRODUCTS_UPLOAD_FOLDER'] = 'static/products_pictures'
 data_base = MySQL(app)
 login_manager_app =  LoginManager(app)
 
-@login_manager_app.user_loader
-def load_user(id):
-    return UserModel.get_by_id(data_base, id)
-
 @app.route('/')
 def index():
     return redirect(url_for('mesas'))

@@ -38,3 +38,30 @@ def pagar_monto_total(data_base, cliente_id):
     sql_command = """CALL db_billar.update_PagarMontoTotal({});""".format(cliente_id)
     cursor.execute(sql_command)
     data_base.connection.commit()
+    
+def setNullClienteCasillero (data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.SetNullIDCliente('{}');""".format(id)
+    cursor.execute(sql_command)
+    data_base.connection.commit()
+    
+def asignar_casillero (data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.AssignCasilleroToCliente('{}');""".format(id)
+    cursor.execute(sql_command)
+    data_base.connection.commit()
+    
+def update_empleado(data_base, empleado_obj):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.update_empleado_by_id (%s, %s, %s, %s, %s, %s, %s);"""
+    cursor.execute(sql_command, (
+        empleado_obj.dni, 
+        empleado_obj.telefono, 
+        empleado_obj.nombre,
+        empleado_obj.apellido, 
+        empleado_obj.correo_electronico,
+        empleado_obj.cargo, 
+        empleado_obj.id_local
+    ))
+    
+    data_base.connection.commit()

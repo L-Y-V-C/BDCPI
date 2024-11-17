@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Editar mesa
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<form action = "/update_empleado/{{ empleado.dni }}" id="form-data" class="form-container" method="post">
+    <div class="img_profile">
+        <img src="/static/img/profile.png" width="150px" style="border-radius: 50%">
+    </div>
+    
+    <div class="content-container" >
+        <h1>Información personal del empleado {{ empleado.dni }}</h1>
+        <div class="inputs_container">
+            <h2>Nombre</h2>
+            <input type="text" id="nombre" name="nombre" class="inputs" placeholder="Nombre" value="{{ empleado.nombre }}" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Apellido</h2>
+            <input type="text" id="apellido" name="apellido" class="inputs" placeholder="Apellido" value="{{ empleado.apellido }}" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Telefono</h2>
+            <input type="text" id="telefono" name="telefono" class="inputs" placeholder="Telefono" value="{{ empleado.telefono }}" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Correo Electronico</h2>
+            <input type="text" id="email" name="email" class="inputs" placeholder="email" value="{{ empleado.correo_electronico }}" required>
+        </div>
+        <div class="select-container">
+            <h2>Cargo</h2>
+            <select name="cargo" required>
+                <option value="Regular">Administrador</option>
+                <option value="Casillero">Atencion</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+</form>
+
+{% endblock %}

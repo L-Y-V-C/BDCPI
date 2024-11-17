@@ -16,6 +16,7 @@ app = Flask (__name__)
 app.secret_key = 'adasdasdasdasdasdasdasd'
 app.config['UPLOAD_FOLDER'] = 'static/profile_pictures'
 app.config['PRODUCTS_UPLOAD_FOLDER'] = 'static/products_pictures'
+current_local_id = 1
 
 data_base = MySQL(app)
 
@@ -177,6 +178,17 @@ def local_info(local_id):
     if not local:
         return render_template('404.html')
     return render_template('local_info.html', local = local, id = local_id)
+
+@app.route('/set_local/<int:local_id>')
+def set_local(local_id):
+    global current_local_id
+    current_local_id = local_id
+    return redirect(url_for('locales'))
+
+@app.context_processor
+def inject_current_local_id():
+    global current_local_id
+    return {'current_local_id': current_local_id}
 
 @app.errorhandler(404)
 def pagina_no_encontrada(error):

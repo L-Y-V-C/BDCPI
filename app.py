@@ -26,7 +26,8 @@ def index():
 #Mesas
 @app.route('/mesas')
 def mesas():
-    mesas_arr = selector.get_all_mesabillar(data_base)
+    #mesas_arr = selector.get_all_mesabillar(data_base)
+    mesas_arr = selector.get_mesabillar_by_id(data_base, current_local_id)
     return render_template('mesas.html', mesas = mesas_arr)
 #Pagos
 @app.route('/pagos')

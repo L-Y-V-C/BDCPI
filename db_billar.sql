@@ -280,11 +280,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_proveedor` (IN `NombreProvee
     INSERT INTO proveedor (Nombre, CorreoElectronico, Tipo, Telefono) VALUES (NombreProveedor, CorreoProveedor, TipoProveedor, TelefonoProveedor);
 END$$
 
-CREATE DEFINER=`` PROCEDURE `proveedor_equipamiento` ()   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedor_equipamiento` ()   BEGIN
 	SELECT proveedor.Nombre,proveedor.CorreoElectronico,equipamiento.Tipo,equipamiento.Descripcion FROM proveedor INNER JOIN equipamiento ON proveedor.IDProveedor=equipamiento.IDProveedor;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `proveedor_ingrediente` ()   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proveedor_ingrediente` ()   BEGIN
 	SELECT proveedor.Nombre,proveedor.CorreoElectronico,ingrediente.Nombre,ingrediente.Cantidad FROM proveedor INNER JOIN ingrediente ON proveedor.IDProveedor= ingrediente.IDIngrediente;
 END$$
 

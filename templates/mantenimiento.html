@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    mantenimiento
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Mesas en mantenimiento</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id mesa</th>
+                    <th class="header-text">Tipo</th>
+                    <th class="header-text">Id mantenimiento</th>
+                    <th class="header-text">Fecha</th>
+                    <th class="header-text">Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mantenimiento in mantenimientos %}
+                    <tr>
+                        <td>{{ mantenimiento.id_mesa_mante}}</td>
+                        <td>{{ mantenimiento.m_tipo }}</td>
+                        <td> {{ mantenimiento.id_manteni }}</td>
+                        <td> {{ mantenimiento.m_fecha }}</td>
+                        <td> {{ mantenimiento.m_descripcion }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

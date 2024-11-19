@@ -152,3 +152,15 @@ def get_empleado_by_id(data_base, id):
     arr = cursor.fetchone()
     empleado = clases.Empleado(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], arr[6])
     return empleado
+
+def get_all_mesabillar_mantenimiento(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_all_mesabillar_mantenimiento ();"""
+    cursor.execute(sql_command)
+
+    arr = cursor.fetchall()
+    mantenimiento_list = []
+    
+    for mantenimiento in arr:
+        mantenimiento_list.append(clases.mesadbm(mantenimiento[0], mantenimiento[1], mantenimiento[2], mantenimiento[3], mantenimiento[4]))
+    return mantenimiento_list

@@ -192,6 +192,12 @@ def set_local(local_id):
     current_local_id = local_id
     return redirect(url_for('locales'))
 
+
+@app.route('/mantenimiento')
+def mantenimiento():
+    mantenimiento_arr = selector.get_all_mesabillar_mantenimiento(data_base)
+    return render_template('mantenimiento.html', mantenimientos = mantenimiento_arr)
+
 @app.route('/empleados')
 def empleados():
     empleados_arr = selector.get_empleados_by_local_id(data_base, current_local_id)

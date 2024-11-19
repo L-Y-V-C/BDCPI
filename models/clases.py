@@ -273,4 +273,40 @@ class mesadbm:
         self.m_fecha=m_fecha
         self.m_descripcion=m_descripcion
     
+class InfoLocal:
+    id_local=0
+    direccion=""
+    nombre=""
+    id_mesa_billar=0
+    id_mesa_comida=0
+    def __init__(self, id_local,direccion, nombre, id_mesa_billar, id_mesa_comida):
+        self.id_local=id_local
+        self.direccion = direccion
+        self.nombre = nombre
+        self.id_mesa_billar = id_mesa_billar 
+        self.id_mesa_comida = id_mesa_comida 
+    def __repr__(self):
+        return f"InfoLocal(id_local={self.id_local}, direccion={self.direccion}, nombre={self.nombre}, id_mesa_billar={self.id_mesa_billar}, id_mesa_comida={self.id_mesa_comida})"
 
+    
+class Proveedor_ingrediente:
+    nombre_proveedor=""
+    correo=""
+    nombre_ingrediente=""
+    cantidad=0
+    def __init__(self,nombre_proveedor,correo,nombre_ingrediente,cantidad):
+        self.nombre_proveedor=nombre_proveedor
+        self.correo=correo
+        self.nombre_ingrediente=nombre_ingrediente
+        self.cantidad=cantidad
+
+class Proveedor_equipamiento:
+    nombre=""
+    correo=""
+    tipo=""
+    descripcion=""
+    def __init__(self,nombre,correo,tipo,descripcion):
+        self.nombre=nombre
+        self.correo=correo
+        self.tipo=tipo
+        self.descripcion=descripcion

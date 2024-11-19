@@ -226,6 +226,20 @@ def update_empleado_by_id(id):
         return redirect(url_for('empleados'))
     else:
         return render_template('update_empleado.html', empleado = empleado_to_update)
+    
+@app.route('/proveedor_equipamiento')
+def proveedor_equipamiento():
+    proequi_arr = selector.proveedor_equipamiento(data_base)
+    return render_template('proveedor_equipamiento.html', proequi = proequi_arr)
+
+@app.route('/proveedor_ingrediente')
+def proveedor_ingrediente():
+    proing_arr = selector.proveedor_ingrediente(data_base)
+    return render_template('proveedor_ingrediente.html', proing = proing_arr)
+
+@app.route('/proveedor')
+def proveedor():
+    return render_template('proveedor.html')
 
 @app.context_processor
 def inject_current_local_id():

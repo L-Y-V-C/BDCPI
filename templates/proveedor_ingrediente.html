@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Proveedores de Ingredientes
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Proveedores de Ingredientes</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Nombre del Proveedor</th>
+                    <th class="header-text">Correo</th>
+                    <th class="header-text">Nombre del Ingrediente</th>
+                    <th class="header-text">Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for proi in proing %}
+                    <tr>
+                        <td>{{ proi.nombre_proveedor }}</td>
+                        <td>{{ proi.correo }}</td>
+                        <td>{{ proi.nombre_ingrediente }}</td>
+                        <td>{{ proi.cantidad }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

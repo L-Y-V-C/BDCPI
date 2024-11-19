@@ -277,7 +277,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `resumen_distribucion_ambientes` () 
 	SELECT tl.IDLocal,tl.Direccion,am.Nombre,mesab.IDMesaBillar,mesacom.IdMesaComida FROM tlocal AS tl INNER JOIN ambiente AS am INNER JOIN mesabillar AS mesab INNER JOIN mesacomida AS mesacom ON tl.IDLocal=am.IDLocal AND am.IDAmbiente=mesab.IDAmbiente AND am.IDAmbiente=mesacom.IDAmbiente GROUP BY tl.Direccion,am.Nombre;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `SetNullIDCliente` (IN `in_IDCliente` INT)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SetNullIDCliente` (IN `in_IDCliente` INT)   BEGIN
     UPDATE casillero
     SET casillero.IDCliente = NULL
     WHERE casillero.IDCliente = in_IDCliente;
@@ -295,7 +295,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_cliente` (IN `cliente_id` IN
     WHERE c.IDCliente = cliente_id;
 END$$
 
-CREATE DEFINER=`` PROCEDURE `update_empleado_by_id` (IN `dni` INTEGER, IN `telefono` INTEGER, IN `nombre` VARCHAR(30), IN `apellido` VARCHAR(50), IN `correo` VARCHAR(50), IN `cargo` VARCHAR(30), IN `id_local` INT)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_empleado_by_id` (IN `dni` INTEGER, IN `telefono` INTEGER, IN `nombre` VARCHAR(30), IN `apellido` VARCHAR(50), IN `correo` VARCHAR(50), IN `cargo` VARCHAR(30), IN `id_local` INT)   BEGIN
     UPDATE empleado emp
     SET 
     	emp.Nombre = nombre,

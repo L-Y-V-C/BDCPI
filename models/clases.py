@@ -264,5 +264,13 @@ class InfoLocal:
     def __repr__(self):
         return f"InfoLocal(id_local={self.id_local}, direccion={self.direccion}, nombre={self.nombre}, id_mesa_billar={self.id_mesa_billar}, id_mesa_comida={self.id_mesa_comida})"
 
+
+class mesadbm:
+    def __init__(self,id_mesa_mante,m_tipo,id_manteni,m_fecha,m_descripcion):
+        self.id_mesa_mante=id_mesa_mante
+        self.m_tipo=m_tipo
+        self.id_manteni=id_manteni
+        self.m_fecha=m_fecha
+        self.m_descripcion=m_descripcion
     
 

@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 11, 2024 at 04:03 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 18-11-2024 a las 04:41:40
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,33 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `db_billar`
+-- Base de datos: `db_billar`
 --
 
 DELIMITER $$
 --
--- Procedures
+-- Procedimientos
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AssignCasilleroToCliente` (IN `in_IDCliente` INT)   BEGIN
+    DECLARE freeCasillero INT;
+
+    -- Llamar a la función para obtener el primer casillero libre
+    SET freeCasillero = GetFirstNullCasillero();
+    
+    IF freeCasillero IS NOT NULL AND freeCasillero != -1 THEN
+        -- Asignar el cliente al casillero libre
+        UPDATE casillero
+        SET IDCliente = in_IDCliente
+        WHERE IDCasillero = freeCasillero;
+    ELSE
+        INSERT INTO casillero (IDCliente) VALUES (in_IDCliente);
+
+        UPDATE casillero
+        SET numero = LAST_INSERT_ID()
+        WHERE IDCasillero = LAST_INSERT_ID();
+    END IF;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_clientes` ()   BEGIN
 	SELECT * FROM cliente;
 END$$
@@ -56,6 +76,49 @@ END$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_cliente_by_id` (IN `cliente_id` INTEGER)   BEGIN
     SELECT * FROM cliente
     WHERE cliente.IDCliente = cliente_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_empleados_by_id` (IN `dni` INTEGER)   BEGIN
+    SELECT * FROM empleado
+    WHERE empleado.DNI = dni;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_empleados_by_local_id` (IN `local_id` INT)   BEGIN
+    SELECT 
+        emp.DNI,
+        emp.Telefono,
+        emp.Nombre,
+        emp.Apellido,
+        emp.CorreoElectronico,
+        emp.Cargo,
+        emp.IDLocal
+    FROM 
+        empleado AS emp
+    INNER JOIN 
+        tlocal AS loc 
+        ON loc.IDLocal = emp.IDLocal
+    WHERE 
+        loc.IDLocal = local_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_mesabillar_by_local_id` (IN `local_id` INTEGER)   BEGIN
+    SELECT 
+        mes.IDMesaBillar, 
+        mes.Tipo, 
+        mes.Estado, 
+        mes.IDMantenimiento, 
+        mes.IDPagoCOM, 
+        mes.IDAmbiente
+    FROM 
+        mesabillar AS mes
+    INNER JOIN 
+        ambiente AS amb 
+        ON mes.IDAmbiente = amb.IDAmbiente
+    INNER JOIN 
+        tlocal AS loc 
+        ON amb.IDLocal = loc.IDLocal
+    WHERE 
+        loc.IDLocal = local_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_mesa_by_id` (IN `id` INT)   BEGIN
@@ -214,6 +277,36 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `resumen_distribucion_ambientes` () 
 	SELECT tl.IDLocal,tl.Direccion,am.Nombre,mesab.IDMesaBillar,mesacom.IdMesaComida FROM tlocal AS tl INNER JOIN ambiente AS am INNER JOIN mesabillar AS mesab INNER JOIN mesacomida AS mesacom ON tl.IDLocal=am.IDLocal AND am.IDAmbiente=mesab.IDAmbiente AND am.IDAmbiente=mesacom.IDAmbiente GROUP BY tl.Direccion,am.Nombre;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SetNullIDCliente` (IN `in_IDCliente` INT)   BEGIN
+    UPDATE casillero
+    SET casillero.IDCliente = NULL
+    WHERE casillero.IDCliente = in_IDCliente;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_cliente` (IN `cliente_id` INTEGER, IN `Nombre` VARCHAR(30), IN `Apellido` VARCHAR(50), IN `Tipo` VARCHAR(10), IN `IDMesaBillar` INTEGER, IN `IDPagoCOM` INTEGER, IN `IDMesaComida` INTEGER)   BEGIN
+    UPDATE cliente c
+    SET 
+        c.Nombre = Nombre,
+        c.Apellidos = Apellido,
+        c.Tipo = Tipo,
+        c.IDMesaBillar= IDMesaBillar,
+        c.IDPagoCOM = IDPagoCOM,
+        c.IDPagoCOM = IDMesaComida
+    WHERE c.IDCliente = cliente_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_empleado_by_id` (IN `dni` INTEGER, IN `telefono` INTEGER, IN `nombre` VARCHAR(30), IN `apellido` VARCHAR(50), IN `correo` VARCHAR(50), IN `cargo` VARCHAR(30), IN `id_local` INT)   BEGIN
+    UPDATE empleado emp
+    SET 
+    	emp.Nombre = nombre,
+        emp.Apellido = apellido,
+        emp.Telefono = telefono,
+        emp.CorreoElectronico = correo,
+        emp.Cargo = cargo,
+        emp.IDLocal = id_local
+    WHERE emp.DNI = dni;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_mesabillar` (IN `id` INT, IN `Tip` VARCHAR(20), IN `Est` VARCHAR(20), IN `Idman` INT(11), IN `IdPago` INT(11), IN `IdAm` INT(11))   BEGIN 
 	UPDATE mesabillar SET mesabillar.Tipo=tip,mesabillar.Estado=Est,mesabillar.IDMantenimiento=Idman,mesabillar.IDPagoCOM=IdPago,mesabillar.IDAmbiente=IdAm WHERE mesabillar.IDMesaBillar=id;
 END$$
@@ -239,12 +332,28 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_Stock` (IN `id` INT)   BEGIN
 	UPDATE consumible SET consumible.Stock=consumible.Stock - 1 WHERE consumible.IDConsumible=id;
 END$$
 
+--
+-- Funciones
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `GetFirstNullCasillero` () RETURNS INT(11) DETERMINISTIC BEGIN
+    DECLARE firstCasillero INT DEFAULT -1;
+
+    SELECT casillero.IDCasillero
+    INTO firstCasillero
+    FROM casillero
+    WHERE casillero.IDCliente IS NULL
+    ORDER BY casillero.IDCasillero
+    LIMIT 1;
+
+    RETURN firstCasillero;
+END$$
+
 DELIMITER ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ambiente`
+-- Estructura de tabla para la tabla `ambiente`
 --
 
 CREATE TABLE `ambiente` (
@@ -255,7 +364,7 @@ CREATE TABLE `ambiente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ambiente`
+-- Volcado de datos para la tabla `ambiente`
 --
 
 INSERT INTO `ambiente` (`IDAmbiente`, `Nombre`, `Capacidad`, `IDLocal`) VALUES
@@ -281,7 +390,7 @@ INSERT INTO `ambiente` (`IDAmbiente`, `Nombre`, `Capacidad`, `IDLocal`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `casillero`
+-- Estructura de tabla para la tabla `casillero`
 --
 
 CREATE TABLE `casillero` (
@@ -291,7 +400,7 @@ CREATE TABLE `casillero` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `casillero`
+-- Volcado de datos para la tabla `casillero`
 --
 
 INSERT INTO `casillero` (`IDCasillero`, `Numero`, `IDCliente`) VALUES
@@ -309,7 +418,7 @@ INSERT INTO `casillero` (`IDCasillero`, `Numero`, `IDCliente`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `checkoutmesa`
+-- Estructura de tabla para la tabla `checkoutmesa`
 --
 
 CREATE TABLE `checkoutmesa` (
@@ -321,7 +430,7 @@ CREATE TABLE `checkoutmesa` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `checkoutmesa`
+-- Volcado de datos para la tabla `checkoutmesa`
 --
 
 INSERT INTO `checkoutmesa` (`IDPagoCOM`, `PrecioHora`, `HoraFin`, `HoraInicio`, `IDLocal`) VALUES
@@ -333,7 +442,7 @@ INSERT INTO `checkoutmesa` (`IDPagoCOM`, `PrecioHora`, `HoraFin`, `HoraInicio`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cliente`
+-- Estructura de tabla para la tabla `cliente`
 --
 
 CREATE TABLE `cliente` (
@@ -347,26 +456,27 @@ CREATE TABLE `cliente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `cliente`
+-- Volcado de datos para la tabla `cliente`
 --
 
 INSERT INTO `cliente` (`IDCliente`, `Nombre`, `Apellidos`, `Tipo`, `IDMesaBillar`, `IDPagoCOM`, `IdMesaComida`) VALUES
 (1, 'Juan', 'Perez', 'Regular', 1, 1, 1),
-(2, 'Maria', 'Lopez', 'Regular', 2, 2, 2),
+(2, 'Maria', 'Lopez', 'Regular', NULL, NULL, NULL),
 (3, 'Carlos', 'Garcia', 'Regular', 8, 3, NULL),
 (4, 'Ana', 'Martinez', 'Regular', NULL, NULL, NULL),
 (5, 'Luis', 'Gonzalez', 'Regular', NULL, NULL, NULL),
 (6, 'Sofia', 'Rodriguez', 'Casillero', NULL, NULL, NULL),
-(7, 'David', 'Hernandez', 'Regular', NULL, NULL, NULL),
-(8, 'Eva', 'Jimenez', 'Casillero', NULL, NULL, NULL),
+(7, 'David', 'Hernandez', 'Casillero', NULL, NULL, NULL),
+(8, 'Eva', 'Jimenez', 'Regular', NULL, NULL, NULL),
 (9, 'Jorge', 'Perez', 'Regular', NULL, NULL, NULL),
 (10, 'Patricia', 'Sanchez', 'Casillero', NULL, NULL, NULL),
-(11, 'Werito', 'Malawero', 'Regular', NULL, NULL, NULL);
+(11, 'Werito', 'Malawero', 'Regular', NULL, NULL, NULL),
+(12, 'www', 'wwww', 'Casillero', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `consumible`
+-- Estructura de tabla para la tabla `consumible`
 --
 
 CREATE TABLE `consumible` (
@@ -378,14 +488,14 @@ CREATE TABLE `consumible` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `consumible`
+-- Volcado de datos para la tabla `consumible`
 --
 
 INSERT INTO `consumible` (`IDConsumible`, `Precio`, `Descripcion`, `Nombre`, `Stock`) VALUES
 (1, 15.00, 'Hamburguesa de Carne', 'Hamburguesa de Carne', 97),
 (2, 12.00, 'Hamburguesa de Pollo', 'Hamburguesa de Pollo', 147),
-(3, 10.00, 'Salchipapa', 'Salchipapa', 196),
-(4, 8.00, 'Papa Rellena', 'Papa Rellena', 119),
+(3, 10.00, 'Salchipapa', 'Salchipapa', 195),
+(4, 8.00, 'Papa Rellena', 'Papa Rellena', 118),
 (5, 7.00, 'Jugo de Platano', 'Jugo de Platano', 178),
 (6, 7.00, 'Jugo de Papaya', 'Jugo de Papaya', 158),
 (7, 12.00, 'Leche Asada', 'Leche Asada', 129),
@@ -396,7 +506,7 @@ INSERT INTO `consumible` (`IDConsumible`, `Precio`, `Descripcion`, `Nombre`, `St
 -- --------------------------------------------------------
 
 --
--- Table structure for table `empleado`
+-- Estructura de tabla para la tabla `empleado`
 --
 
 CREATE TABLE `empleado` (
@@ -410,19 +520,21 @@ CREATE TABLE `empleado` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `empleado`
+-- Volcado de datos para la tabla `empleado`
 --
 
 INSERT INTO `empleado` (`DNI`, `Telefono`, `Nombre`, `Apellido`, `CorreoElectronico`, `Cargo`, `IDLocal`) VALUES
 (12345678, '987654321', 'Juan', 'Pérez', 'juan.perez@email.com', 'Administrador', 1),
 (23456789, '956789123', 'Carlos', 'Ramírez', 'carlos.ramirez@email.com', 'Atencion', 1),
 (34567890, '934567890', 'Ana', 'Torres', 'ana.torres@email.com', 'Atencion', 1),
-(87654321, '912345678', 'María', 'Gómez', 'maria.gomez@email.com', 'Atencion', 1);
+(87654321, '912345678', 'María', 'Gómez', 'maria.gomez@email.com', 'Atencion', 1),
+(89123212, '983212491', 'José', 'Muchica', 'pepe@gmail.com', 'Regular', 2),
+(89123214, '98931239', 'Jose Antonio', 'Muchica', 'jose@gmail.com', 'Casillero', 2);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `equipamiento`
+-- Estructura de tabla para la tabla `equipamiento`
 --
 
 CREATE TABLE `equipamiento` (
@@ -435,7 +547,7 @@ CREATE TABLE `equipamiento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `equipamiento`
+-- Volcado de datos para la tabla `equipamiento`
 --
 
 INSERT INTO `equipamiento` (`IDEquipamiento`, `Tipo`, `Descripcion`, `IDLocal`, `IDProveedor`, `IDMantenimiento`) VALUES
@@ -467,7 +579,7 @@ INSERT INTO `equipamiento` (`IDEquipamiento`, `Tipo`, `Descripcion`, `IDLocal`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ingrediente`
+-- Estructura de tabla para la tabla `ingrediente`
 --
 
 CREATE TABLE `ingrediente` (
@@ -478,7 +590,7 @@ CREATE TABLE `ingrediente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ingrediente`
+-- Volcado de datos para la tabla `ingrediente`
 --
 
 INSERT INTO `ingrediente` (`IDIngrediente`, `Nombre`, `Cantidad`, `IDProveedor`) VALUES
@@ -506,7 +618,7 @@ INSERT INTO `ingrediente` (`IDIngrediente`, `Nombre`, `Cantidad`, `IDProveedor`)
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ingrediente_consumible`
+-- Estructura de tabla para la tabla `ingrediente_consumible`
 --
 
 CREATE TABLE `ingrediente_consumible` (
@@ -515,7 +627,7 @@ CREATE TABLE `ingrediente_consumible` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `ingrediente_consumible`
+-- Volcado de datos para la tabla `ingrediente_consumible`
 --
 
 INSERT INTO `ingrediente_consumible` (`IDIngrediente`, `IDConsumible`) VALUES
@@ -553,7 +665,7 @@ INSERT INTO `ingrediente_consumible` (`IDIngrediente`, `IDConsumible`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `local_consumible`
+-- Estructura de tabla para la tabla `local_consumible`
 --
 
 CREATE TABLE `local_consumible` (
@@ -562,7 +674,7 @@ CREATE TABLE `local_consumible` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `local_consumible`
+-- Volcado de datos para la tabla `local_consumible`
 --
 
 INSERT INTO `local_consumible` (`IDConsumible`, `IDLocal`) VALUES
@@ -580,7 +692,7 @@ INSERT INTO `local_consumible` (`IDConsumible`, `IDLocal`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mantenimiento`
+-- Estructura de tabla para la tabla `mantenimiento`
 --
 
 CREATE TABLE `mantenimiento` (
@@ -590,7 +702,7 @@ CREATE TABLE `mantenimiento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `mantenimiento`
+-- Volcado de datos para la tabla `mantenimiento`
 --
 
 INSERT INTO `mantenimiento` (`IDMantenimiento`, `Fecha`, `Descripción`) VALUES
@@ -603,7 +715,7 @@ INSERT INTO `mantenimiento` (`IDMantenimiento`, `Fecha`, `Descripción`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mesabillar`
+-- Estructura de tabla para la tabla `mesabillar`
 --
 
 CREATE TABLE `mesabillar` (
@@ -616,12 +728,12 @@ CREATE TABLE `mesabillar` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `mesabillar`
+-- Volcado de datos para la tabla `mesabillar`
 --
 
 INSERT INTO `mesabillar` (`IDMesaBillar`, `Tipo`, `Estado`, `IDMantenimiento`, `IDPagoCOM`, `IDAmbiente`) VALUES
 (1, 'Normal', 'En uso', NULL, 1, 1),
-(2, 'Normal', 'En uso', NULL, 2, 1),
+(2, 'Normal', 'En uso', NULL, NULL, 1),
 (3, 'Normal', 'Mantenimiento', 4, NULL, 1),
 (4, 'Snooker', 'Disponible', NULL, NULL, 1),
 (5, 'Normal', 'Disponible', NULL, NULL, 2),
@@ -696,7 +808,7 @@ INSERT INTO `mesabillar` (`IDMesaBillar`, `Tipo`, `Estado`, `IDMantenimiento`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mesacomida`
+-- Estructura de tabla para la tabla `mesacomida`
 --
 
 CREATE TABLE `mesacomida` (
@@ -707,7 +819,7 @@ CREATE TABLE `mesacomida` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `mesacomida`
+-- Volcado de datos para la tabla `mesacomida`
 --
 
 INSERT INTO `mesacomida` (`IdMesaComida`, `Capacidad`, `Numero`, `IDAmbiente`) VALUES
@@ -751,7 +863,7 @@ INSERT INTO `mesacomida` (`IdMesaComida`, `Capacidad`, `Numero`, `IDAmbiente`) V
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pago`
+-- Estructura de tabla para la tabla `pago`
 --
 
 CREATE TABLE `pago` (
@@ -762,7 +874,7 @@ CREATE TABLE `pago` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pago`
+-- Volcado de datos para la tabla `pago`
 --
 
 INSERT INTO `pago` (`IDPago`, `Metodo`, `IDPagoCOM`, `IDPedidoConsumible`) VALUES
@@ -782,7 +894,7 @@ INSERT INTO `pago` (`IDPago`, `Metodo`, `IDPagoCOM`, `IDPedidoConsumible`) VALUE
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pedidoconsumible`
+-- Estructura de tabla para la tabla `pedidoconsumible`
 --
 
 CREATE TABLE `pedidoconsumible` (
@@ -793,16 +905,16 @@ CREATE TABLE `pedidoconsumible` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pedidoconsumible`
+-- Volcado de datos para la tabla `pedidoconsumible`
 --
 
 INSERT INTO `pedidoconsumible` (`IDPedidoConsumible`, `Cantidad`, `IDCliente`, `IDLocal`) VALUES
 (1, 2, 1, 1),
 (2, 3, 1, 1),
 (3, 1, 1, 1),
-(4, 2, 2, 1),
-(5, 1, 2, 1),
-(6, 3, 2, 1),
+(4, 2, NULL, 1),
+(5, 1, NULL, 1),
+(6, 3, NULL, 1),
 (7, 3, 3, 1),
 (8, 2, 3, 1),
 (9, 2, 3, 1),
@@ -810,12 +922,13 @@ INSERT INTO `pedidoconsumible` (`IDPedidoConsumible`, `Cantidad`, `IDCliente`, `
 (11, 2, NULL, 1),
 (12, 3, NULL, 1),
 (13, 1, 4, NULL),
-(14, 1, 4, NULL);
+(14, 1, 4, NULL),
+(15, 1, 4, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pedidoconsumible_consumible`
+-- Estructura de tabla para la tabla `pedidoconsumible_consumible`
 --
 
 CREATE TABLE `pedidoconsumible_consumible` (
@@ -824,7 +937,7 @@ CREATE TABLE `pedidoconsumible_consumible` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pedidoconsumible_consumible`
+-- Volcado de datos para la tabla `pedidoconsumible_consumible`
 --
 
 INSERT INTO `pedidoconsumible_consumible` (`IDConsumible`, `IDPedidoConsumible`) VALUES
@@ -835,8 +948,10 @@ INSERT INTO `pedidoconsumible_consumible` (`IDConsumible`, `IDPedidoConsumible`)
 (3, 6),
 (3, 7),
 (3, 12),
+(3, 15),
 (4, 3),
 (4, 8),
+(4, 15),
 (7, 14),
 (8, 5),
 (8, 14),
@@ -848,7 +963,7 @@ INSERT INTO `pedidoconsumible_consumible` (`IDConsumible`, `IDPedidoConsumible`)
 -- --------------------------------------------------------
 
 --
--- Table structure for table `proveedor`
+-- Estructura de tabla para la tabla `proveedor`
 --
 
 CREATE TABLE `proveedor` (
@@ -860,7 +975,7 @@ CREATE TABLE `proveedor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `proveedor`
+-- Volcado de datos para la tabla `proveedor`
 --
 
 INSERT INTO `proveedor` (`IDProveedor`, `Nombre`, `CorreoElectronico`, `Tipo`, `Telefono`) VALUES
@@ -874,7 +989,7 @@ INSERT INTO `proveedor` (`IDProveedor`, `Nombre`, `CorreoElectronico`, `Tipo`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tlocal`
+-- Estructura de tabla para la tabla `tlocal`
 --
 
 CREATE TABLE `tlocal` (
@@ -885,7 +1000,7 @@ CREATE TABLE `tlocal` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tlocal`
+-- Volcado de datos para la tabla `tlocal`
 --
 
 INSERT INTO `tlocal` (`IDLocal`, `Direccion`, `horaApertura`, `horaCierra`) VALUES
@@ -897,32 +1012,32 @@ INSERT INTO `tlocal` (`IDLocal`, `Direccion`, `horaApertura`, `horaCierra`) VALU
 (6, 'Calle 6, Local 6', '07:00:00', '22:00:00');
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `ambiente`
+-- Indices de la tabla `ambiente`
 --
 ALTER TABLE `ambiente`
   ADD PRIMARY KEY (`IDAmbiente`),
   ADD KEY `IDLocal` (`IDLocal`);
 
 --
--- Indexes for table `casillero`
+-- Indices de la tabla `casillero`
 --
 ALTER TABLE `casillero`
   ADD PRIMARY KEY (`IDCasillero`),
   ADD KEY `IDCliente` (`IDCliente`);
 
 --
--- Indexes for table `checkoutmesa`
+-- Indices de la tabla `checkoutmesa`
 --
 ALTER TABLE `checkoutmesa`
   ADD PRIMARY KEY (`IDPagoCOM`),
   ADD KEY `IDLocal` (`IDLocal`);
 
 --
--- Indexes for table `cliente`
+-- Indices de la tabla `cliente`
 --
 ALTER TABLE `cliente`
   ADD PRIMARY KEY (`IDCliente`),
@@ -931,20 +1046,20 @@ ALTER TABLE `cliente`
   ADD KEY `IdMesaComida` (`IdMesaComida`);
 
 --
--- Indexes for table `consumible`
+-- Indices de la tabla `consumible`
 --
 ALTER TABLE `consumible`
   ADD PRIMARY KEY (`IDConsumible`);
 
 --
--- Indexes for table `empleado`
+-- Indices de la tabla `empleado`
 --
 ALTER TABLE `empleado`
   ADD PRIMARY KEY (`DNI`),
   ADD KEY `IDLocal` (`IDLocal`);
 
 --
--- Indexes for table `equipamiento`
+-- Indices de la tabla `equipamiento`
 --
 ALTER TABLE `equipamiento`
   ADD PRIMARY KEY (`IDEquipamiento`),
@@ -953,34 +1068,34 @@ ALTER TABLE `equipamiento`
   ADD KEY `IDMantenimiento` (`IDMantenimiento`);
 
 --
--- Indexes for table `ingrediente`
+-- Indices de la tabla `ingrediente`
 --
 ALTER TABLE `ingrediente`
   ADD PRIMARY KEY (`IDIngrediente`),
   ADD KEY `IDProveedor` (`IDProveedor`);
 
 --
--- Indexes for table `ingrediente_consumible`
+-- Indices de la tabla `ingrediente_consumible`
 --
 ALTER TABLE `ingrediente_consumible`
   ADD PRIMARY KEY (`IDIngrediente`,`IDConsumible`),
   ADD KEY `IDConsumible` (`IDConsumible`);
 
 --
--- Indexes for table `local_consumible`
+-- Indices de la tabla `local_consumible`
 --
 ALTER TABLE `local_consumible`
   ADD PRIMARY KEY (`IDConsumible`,`IDLocal`),
   ADD KEY `IDLocal` (`IDLocal`);
 
 --
--- Indexes for table `mantenimiento`
+-- Indices de la tabla `mantenimiento`
 --
 ALTER TABLE `mantenimiento`
   ADD PRIMARY KEY (`IDMantenimiento`);
 
 --
--- Indexes for table `mesabillar`
+-- Indices de la tabla `mesabillar`
 --
 ALTER TABLE `mesabillar`
   ADD PRIMARY KEY (`IDMesaBillar`),
@@ -989,14 +1104,14 @@ ALTER TABLE `mesabillar`
   ADD KEY `IDAmbiente` (`IDAmbiente`);
 
 --
--- Indexes for table `mesacomida`
+-- Indices de la tabla `mesacomida`
 --
 ALTER TABLE `mesacomida`
   ADD PRIMARY KEY (`IdMesaComida`),
   ADD KEY `IDAmbiente` (`IDAmbiente`);
 
 --
--- Indexes for table `pago`
+-- Indices de la tabla `pago`
 --
 ALTER TABLE `pago`
   ADD PRIMARY KEY (`IDPago`),
@@ -1004,7 +1119,7 @@ ALTER TABLE `pago`
   ADD KEY `IDPedidoConsumible` (`IDPedidoConsumible`);
 
 --
--- Indexes for table `pedidoconsumible`
+-- Indices de la tabla `pedidoconsumible`
 --
 ALTER TABLE `pedidoconsumible`
   ADD PRIMARY KEY (`IDPedidoConsumible`),
@@ -1012,136 +1127,136 @@ ALTER TABLE `pedidoconsumible`
   ADD KEY `IDLocal` (`IDLocal`);
 
 --
--- Indexes for table `pedidoconsumible_consumible`
+-- Indices de la tabla `pedidoconsumible_consumible`
 --
 ALTER TABLE `pedidoconsumible_consumible`
   ADD PRIMARY KEY (`IDConsumible`,`IDPedidoConsumible`),
   ADD KEY `IDPedidoConsumible` (`IDPedidoConsumible`);
 
 --
--- Indexes for table `proveedor`
+-- Indices de la tabla `proveedor`
 --
 ALTER TABLE `proveedor`
   ADD PRIMARY KEY (`IDProveedor`);
 
 --
--- Indexes for table `tlocal`
+-- Indices de la tabla `tlocal`
 --
 ALTER TABLE `tlocal`
   ADD PRIMARY KEY (`IDLocal`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `ambiente`
+-- AUTO_INCREMENT de la tabla `ambiente`
 --
 ALTER TABLE `ambiente`
   MODIFY `IDAmbiente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT for table `casillero`
+-- AUTO_INCREMENT de la tabla `casillero`
 --
 ALTER TABLE `casillero`
   MODIFY `IDCasillero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `checkoutmesa`
+-- AUTO_INCREMENT de la tabla `checkoutmesa`
 --
 ALTER TABLE `checkoutmesa`
   MODIFY `IDPagoCOM` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `cliente`
+-- AUTO_INCREMENT de la tabla `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `IDCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `IDCliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `consumible`
+-- AUTO_INCREMENT de la tabla `consumible`
 --
 ALTER TABLE `consumible`
   MODIFY `IDConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `equipamiento`
+-- AUTO_INCREMENT de la tabla `equipamiento`
 --
 ALTER TABLE `equipamiento`
   MODIFY `IDEquipamiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
--- AUTO_INCREMENT for table `ingrediente`
+-- AUTO_INCREMENT de la tabla `ingrediente`
 --
 ALTER TABLE `ingrediente`
   MODIFY `IDIngrediente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT for table `mantenimiento`
+-- AUTO_INCREMENT de la tabla `mantenimiento`
 --
 ALTER TABLE `mantenimiento`
   MODIFY `IDMantenimiento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `mesabillar`
+-- AUTO_INCREMENT de la tabla `mesabillar`
 --
 ALTER TABLE `mesabillar`
   MODIFY `IDMesaBillar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
--- AUTO_INCREMENT for table `mesacomida`
+-- AUTO_INCREMENT de la tabla `mesacomida`
 --
 ALTER TABLE `mesacomida`
   MODIFY `IdMesaComida` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
--- AUTO_INCREMENT for table `pago`
+-- AUTO_INCREMENT de la tabla `pago`
 --
 ALTER TABLE `pago`
   MODIFY `IDPago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `pedidoconsumible`
+-- AUTO_INCREMENT de la tabla `pedidoconsumible`
 --
 ALTER TABLE `pedidoconsumible`
-  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
--- AUTO_INCREMENT for table `proveedor`
+-- AUTO_INCREMENT de la tabla `proveedor`
 --
 ALTER TABLE `proveedor`
   MODIFY `IDProveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `tlocal`
+-- AUTO_INCREMENT de la tabla `tlocal`
 --
 ALTER TABLE `tlocal`
   MODIFY `IDLocal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- Constraints for dumped tables
+-- Restricciones para tablas volcadas
 --
 
 --
--- Constraints for table `ambiente`
+-- Filtros para la tabla `ambiente`
 --
 ALTER TABLE `ambiente`
   ADD CONSTRAINT `ambiente_ibfk_1` FOREIGN KEY (`IDLocal`) REFERENCES `tlocal` (`IDLocal`);
 
 --
--- Constraints for table `casillero`
+-- Filtros para la tabla `casillero`
 --
 ALTER TABLE `casillero`
   ADD CONSTRAINT `casillero_ibfk_1` FOREIGN KEY (`IDCliente`) REFERENCES `cliente` (`IDCliente`);
 
 --
--- Constraints for table `checkoutmesa`
+-- Filtros para la tabla `checkoutmesa`
 --
 ALTER TABLE `checkoutmesa`
   ADD CONSTRAINT `checkoutmesa_ibfk_1` FOREIGN KEY (`IDLocal`) REFERENCES `tlocal` (`IDLocal`);
 
 --
--- Constraints for table `cliente`
+-- Filtros para la tabla `cliente`
 --
 ALTER TABLE `cliente`
   ADD CONSTRAINT `cliente_ibfk_1` FOREIGN KEY (`IDMesaBillar`) REFERENCES `mesabillar` (`IDMesaBillar`),
@@ -1149,13 +1264,13 @@ ALTER TABLE `cliente`
   ADD CONSTRAINT `cliente_ibfk_3` FOREIGN KEY (`IdMesaComida`) REFERENCES `mesacomida` (`IdMesaComida`);
 
 --
--- Constraints for table `empleado`
+-- Filtros para la tabla `empleado`
 --
 ALTER TABLE `empleado`
   ADD CONSTRAINT `empleado_ibfk_1` FOREIGN KEY (`IDLocal`) REFERENCES `tlocal` (`IDLocal`);
 
 --
--- Constraints for table `equipamiento`
+-- Filtros para la tabla `equipamiento`
 --
 ALTER TABLE `equipamiento`
   ADD CONSTRAINT `equipamiento_ibfk_1` FOREIGN KEY (`IDLocal`) REFERENCES `tlocal` (`IDLocal`),
@@ -1163,27 +1278,27 @@ ALTER TABLE `equipamiento`
   ADD CONSTRAINT `equipamiento_ibfk_3` FOREIGN KEY (`IDMantenimiento`) REFERENCES `mantenimiento` (`IDMantenimiento`);
 
 --
--- Constraints for table `ingrediente`
+-- Filtros para la tabla `ingrediente`
 --
 ALTER TABLE `ingrediente`
   ADD CONSTRAINT `ingrediente_ibfk_1` FOREIGN KEY (`IDProveedor`) REFERENCES `proveedor` (`IDProveedor`);
 
 --
--- Constraints for table `ingrediente_consumible`
+-- Filtros para la tabla `ingrediente_consumible`
 --
 ALTER TABLE `ingrediente_consumible`
   ADD CONSTRAINT `ingrediente_consumible_ibfk_1` FOREIGN KEY (`IDIngrediente`) REFERENCES `ingrediente` (`IDIngrediente`),
   ADD CONSTRAINT `ingrediente_consumible_ibfk_2` FOREIGN KEY (`IDConsumible`) REFERENCES `consumible` (`IDConsumible`);
 
 --
--- Constraints for table `local_consumible`
+-- Filtros para la tabla `local_consumible`
 --
 ALTER TABLE `local_consumible`
   ADD CONSTRAINT `local_consumible_ibfk_1` FOREIGN KEY (`IDConsumible`) REFERENCES `consumible` (`IDConsumible`),
   ADD CONSTRAINT `local_consumible_ibfk_2` FOREIGN KEY (`IDLocal`) REFERENCES `tlocal` (`IDLocal`);
 
 --
--- Constraints for table `mesabillar`
+-- Filtros para la tabla `mesabillar`
 --
 ALTER TABLE `mesabillar`
   ADD CONSTRAINT `mesabillar_ibfk_1` FOREIGN KEY (`IDMantenimiento`) REFERENCES `mantenimiento` (`IDMantenimiento`),
@@ -1191,27 +1306,27 @@ ALTER TABLE `mesabillar`
   ADD CONSTRAINT `mesabillar_ibfk_3` FOREIGN KEY (`IDAmbiente`) REFERENCES `ambiente` (`IDAmbiente`);
 
 --
--- Constraints for table `mesacomida`
+-- Filtros para la tabla `mesacomida`
 --
 ALTER TABLE `mesacomida`
   ADD CONSTRAINT `mesacomida_ibfk_1` FOREIGN KEY (`IDAmbiente`) REFERENCES `ambiente` (`IDAmbiente`);
 
 --
--- Constraints for table `pago`
+-- Filtros para la tabla `pago`
 --
 ALTER TABLE `pago`
   ADD CONSTRAINT `pago_ibfk_1` FOREIGN KEY (`IDPagoCOM`) REFERENCES `checkoutmesa` (`IDPagoCOM`),
   ADD CONSTRAINT `pago_ibfk_2` FOREIGN KEY (`IDPedidoConsumible`) REFERENCES `pedidoconsumible` (`IDPedidoConsumible`);
 
 --
--- Constraints for table `pedidoconsumible`
+-- Filtros para la tabla `pedidoconsumible`
 --
 ALTER TABLE `pedidoconsumible`
   ADD CONSTRAINT `pedidoconsumible_ibfk_1` FOREIGN KEY (`IDCliente`) REFERENCES `cliente` (`IDCliente`),
   ADD CONSTRAINT `pedidoconsumible_ibfk_2` FOREIGN KEY (`IDLocal`) REFERENCES `tlocal` (`IDLocal`);
 
 --
--- Constraints for table `pedidoconsumible_consumible`
+-- Filtros para la tabla `pedidoconsumible_consumible`
 --
 ALTER TABLE `pedidoconsumible_consumible`
   ADD CONSTRAINT `pedidoconsumible_consumible_ibfk_1` FOREIGN KEY (`IDConsumible`) REFERENCES `consumible` (`IDConsumible`),

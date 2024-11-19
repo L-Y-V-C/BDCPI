@@ -16,6 +16,7 @@ app = Flask (__name__)
 app.secret_key = 'adasdasdasdasdasdasdasd'
 app.config['UPLOAD_FOLDER'] = 'static/profile_pictures'
 app.config['PRODUCTS_UPLOAD_FOLDER'] = 'static/products_pictures'
+current_local_id = 1
 
 data_base = MySQL(app)
 
@@ -25,7 +26,8 @@ def index():
 #Mesas
 @app.route('/mesas')
 def mesas():
-    mesas_arr = selector.get_all_mesabillar(data_base)
+    #mesas_arr = selector.get_all_mesabillar(data_base)
+    mesas_arr = selector.get_mesabillar_by_local_id(data_base, current_local_id)
     return render_template('mesas.html', mesas = mesas_arr)
 #Pagos
 @app.route('/pagos')
@@ -54,9 +56,15 @@ def update_cliente_by_id(id):
     if request.method == 'POST':
         cliente_to_update.nombre = request.form['nombre']
         cliente_to_update.apellidos = request.form['apellido']
+        prev_tipo = cliente_to_update.tipo
         cliente_to_update.tipo = request.form['tipo']
-        
+        if (cliente_to_update.tipo == "Regular"):
+            updater.setNullClienteCasillero(data_base, cliente_to_update.id)
+        else:
+            if (prev_tipo == "Regular"):
+                updater.asignar_casillero(data_base, cliente_to_update.id)
         updater.update_cliente(data_base, cliente_to_update)
+        
         return redirect(url_for('clientes'))
     else:
         return render_template('update_cliente.html', cliente = cliente_to_update)
@@ -177,6 +185,46 @@ def local_info(local_id):
     if not local:
         return render_template('404.html')
     return render_template('local_info.html', local = local, id = local_id)
+
+@app.route('/set_local/<int:local_id>')
+def set_local(local_id):
+    global current_local_id
+    current_local_id = local_id
+    return redirect(url_for('locales'))
+
+@app.route('/empleados')
+def empleados():
+    empleados_arr = selector.get_empleados_by_local_id(data_base, current_local_id)
+    return render_template('empleados.html', empleados = empleados_arr)
+
+@app.route('/registrar_empleado', methods = ['GET', 'POST'])
+def register_empleado():
+    if request.method == 'POST':
+        empleado_obj = clases.Empleado(request.form['dni'],request.form['telefono'], request.form['nombre'],request.form['apellido'], request.form['email'], request.form['cargo'], current_local_id)
+        inserter.create_empleado(data_base, empleado_obj)
+        return redirect(url_for('empleados'))
+    else:
+        return render_template('registrar_empleados.html')
+
+@app.route('/update_empleado/<int:id>', methods = ['GET', 'POST'])
+def update_empleado_by_id(id):
+    empleado_to_update = selector.get_empleado_by_id(data_base, id)
+    if request.method == 'POST':
+        empleado_to_update.telefono = request.form['telefono']
+        empleado_to_update.nombre = request.form['nombre']
+        empleado_to_update.apellido = request.form['apellido']
+        empleado_to_update.correo_electronico = request.form['email']
+        empleado_to_update.cargo = request.form['cargo']
+        
+        updater.update_empleado(data_base, empleado_to_update)
+        return redirect(url_for('empleados'))
+    else:
+        return render_template('update_empleado.html', empleado = empleado_to_update)
+
+@app.context_processor
+def inject_current_local_id():
+    global current_local_id
+    return {'current_local_id': current_local_id}
 
 @app.errorhandler(404)
 def pagina_no_encontrada(error):

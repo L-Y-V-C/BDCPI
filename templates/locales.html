@@ -20,7 +20,8 @@
                     <p><strong>Hora Apertura:</strong> {{ local.hora_apertura }}</p>
                     <p><strong>Hora Cierre:</strong> {{ local.hora_cierre }}</p>
                     <div style="margin-top: 10px;">
-                        <a href="{{ url_for('local_info', local_id=local.id) }}" class="btn-update">Seleccionar</a>
+                        <a href="{{ url_for('set_local', local_id=local.id) }}" class="btn-update">Seleccionar</a>
+                        <a href="{{ url_for('local_info', local_id=local.id) }}" class="btn-update">Informacion</a>
                     </div>
                 </div>
                 

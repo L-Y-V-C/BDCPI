@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    INGRESAR CLIENTES
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+<form action="/registrar_empleado" id="form-data" class="form-container" method="post">
+    <div class="content-container" >
+        <h1>Registrar empleado</h1>
+        <div class="inputs_container">
+            <h2>Nombre</h2>
+            <input type="text" name="nombre" placeholder="Nombre del cliente" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Apellido</h2>
+            <input type="text" name="apellido" placeholder="Apellidos" required>
+        </div>
+        <div class="inputs_container">
+            <h2>DNI</h2>
+            <input type="text" name="dni" placeholder="DNI" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Correo Electronico</h2>
+            <input type="text" name="email" placeholder="example@gmail.com" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Telefono</h2>
+            <input type="text" name="telefono" placeholder="Apellidos" required>
+        </div>
+        <div class="select-container">
+            <h2>Cargo</h2>
+            <select name="cargo" required>
+                <option value="Regular">Administrador</option>
+                <option value="Casillero">Atencion</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+    
+</form>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    MESAS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Empleados</h1>
+        <div class="registrar">
+            <a href="/registrar_empleado" class="a-ref">Añadir empleado</a>
+        </div>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text"> DNI </th>
+                    <th class="header-text"> Telefono </th>
+                    <th class="header-text"> Nombre </th>
+                    <th class="header-text"> Apellidos </th>
+                    <th class="header-text"> Correo electronico </th>
+                    <th class="header-text"> Cargo </th>
+                    <th class="header-text"> Actualizar </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empleado in empleados %}
+                    <tr>
+                        <td>{{ empleado.dni }}</td>
+                        <td>{{ empleado.telefono }}</td>
+                        <td>{{ empleado.nombre }}</td>
+                        <td>{{ empleado.apellido }}</td>
+                        <td>{{ empleado.cargo }}</td>
+                        <td>{{ empleado.correo_electronico }}</td>
+
+                        <td>
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                                <a href="/update_empleado/{{ empleado.dni }}" class="btn-update">Editar</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

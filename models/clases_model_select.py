@@ -1,12 +1,20 @@
-#get_all_distribucion_ambientes
-#get_all_pedido_completo
-#get_all_propietario_casillero
-
 import models.clases as clases
 
 def get_all_mesabillar (data_base):
     cursor = data_base.connection.cursor()
     sql_command = """CALL db_billar.get_all_mesabillar();"""
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchall()
+    mesabillar_list = []
+    
+    for mesabillar in arr:
+        mesabillar_list.append(clases.Mesabillar(mesabillar[0], mesabillar[1], mesabillar[2], None, None, None))
+    return mesabillar_list
+
+def get_mesabillar_by_local_id (data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_mesabillar_by_local_id('{}');""".format(id)
     cursor.execute(sql_command)
     
     arr = cursor.fetchall()
@@ -125,3 +133,22 @@ def get_monto_total_cliente(data_base, cliente_id):
     monto_total = clases.MontoTotal(arr[0], arr[1], arr[2])
     return monto_total
 
+def get_empleados_by_local_id (data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_empleados_by_local_id ('{}');""".format(id)
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchall()
+    empleados_list = []
+    
+    for empleado in arr:
+        empleados_list.append(clases.Empleado(empleado[0], empleado[1], empleado[2], empleado[3], empleado[4], empleado[5], empleado[6]))
+    return empleados_list
+
+def get_empleado_by_id(data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_empleados_by_id ('{}');""".format(id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchone()
+    empleado = clases.Empleado(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], arr[6])
+    return empleado

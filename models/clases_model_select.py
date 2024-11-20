@@ -164,3 +164,30 @@ def get_all_mesabillar_mantenimiento(data_base):
     for mantenimiento in arr:
         mantenimiento_list.append(clases.mesadbm(mantenimiento[0], mantenimiento[1], mantenimiento[2], mantenimiento[3], mantenimiento[4]))
     return mantenimiento_list
+
+def proveedor_equipamiento(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.proveedor_equipamiento();""".format()
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchall()
+    proequi_list = []
+    
+    for proe in arr:
+        
+        proequi_list.append(clases.Proveedor_equipamiento(proe[0], proe[1], proe[2], proe[3]))
+    return proequi_list
+
+
+def proveedor_ingrediente(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.proveedor_ingrediente();""".format()
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchall()
+    proing_list = []
+    
+    for proi in arr:
+        print(proi[0], proi[1], proi[2], proi[3])
+        proing_list.append(clases.Proveedor_ingrediente(proi[0], proi[1], proi[2], proi[3]))
+    return proing_list

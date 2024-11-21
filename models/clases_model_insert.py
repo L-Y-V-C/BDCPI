@@ -159,3 +159,11 @@ def create_proveedor_ingrediente(data_base, proveedor_obj, ingrediente_obj):
         proveedor_obj.nombre, proveedor_obj.correo_electronico, proveedor_obj.tipo, proveedor_obj.telefono, ingrediente_obj.nombre, ingrediente_obj.cantidad
     ))
     data_base.connection.commit()
+
+def assign_consumible_pago(data_base,pedido_consumible_obj,id_pedido_consumible):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.assign_consumible_pago('{}','{}');""".format(
+        pedido_consumible_obj.id_cliente,id_pedido_consumible
+    )
+    cursor.execute(sql_command)
+    data_base.connection.commit()

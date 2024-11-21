@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-11-2024 a las 02:33:29
+-- Tiempo de generación: 21-11-2024 a las 04:43:55
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -41,6 +41,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `AssignCasilleroToCliente` (IN `in_I
         SET numero = LAST_INSERT_ID()
         WHERE IDCasillero = LAST_INSERT_ID();
     END IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `assign_consumible_pago` (IN `id_cliente` INT, IN `id_pedidoconsumible` INT)   BEGIN
+	DECLARE pago_new_com INT;
+    SET pago_new_com = IDpagocom_get(id_cliente);
+    CALL insert_pago('Efectivo',pago_new_com,id_pedidoconsumible);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `create_proveedor_ingrediente` (IN `in_nombre` VARCHAR(30), IN `in_correo` VARCHAR(50), IN `in_tipo` VARCHAR(30), IN `in_telefono` VARCHAR(9), IN `in_ing_nombre` VARCHAR(30), IN `in_cantidad` INT)   BEGIN
@@ -294,11 +300,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_mesacomida` (IN `CapacidadMe
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pago` (IN `MetodoPago` VARCHAR(15), IN `IDPedidoConsumiblePago` INT, IN `IDPagoCOM` INT)   BEGIN
-    INSERT INTO pago (Metodo, IDPedidoConsumible, IDPagoCOM) VALUES (MetodoPago, IDPedidoConsumiblePago, IDPagoCOM);
+    INSERT INTO pago VALUES (NULL,MetodoPago, IDPedidoConsumiblePago,IDPagoCOM);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pedidoconsumible` (IN `CantidadConsumible` INT, IN `IDClienteConsumible` INT, IN `IDLocalConsumible` INT)   BEGIN
-    INSERT INTO pedidoconsumible (IDPedidoConsumible,Cantidad, IDCliente, IDLocal) VALUES (NULL,CantidadConsumible, IDClienteConsumible, NULL);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pedidoconsumible` (IN `IDClienteConsumible` INT, IN `IDLocalConsumible` INT)   BEGIN
+    INSERT INTO pedidoconsumible ( IDCliente, IDLocal) VALUES (IDClienteConsumible, NULL);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_pedidoconsumible_consumible` (IN `IDConsumiblePedido` INT, IN `IDPedidoConsumibleConsumible` INT)   BEGIN
@@ -390,6 +396,12 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `GetFirstNullCasillero` () RETURNS IN
     LIMIT 1;
 
     RETURN firstCasillero;
+END$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `IDpagocom_get` (`IDclient` INT) RETURNS INT(11) DETERMINISTIC BEGIN
+	DECLARE idpagocom INT;
+    SELECT cliente.IDPagoCOM INTO idpagocom FROM cliente WHERE cliente.IDCliente=IDclient;
+    return idpagocom;
 END$$
 
 CREATE DEFINER=`root`@`localhost` FUNCTION `obtener_ultimo_proveedor` () RETURNS INT(11) DETERMINISTIC BEGIN
@@ -547,11 +559,11 @@ CREATE TABLE `consumible` (
 --
 
 INSERT INTO `consumible` (`IDConsumible`, `Precio`, `Descripcion`, `Nombre`, `Stock`) VALUES
-(1, 15.00, 'Hamburguesa de Carne', 'Hamburguesa de Carne', 97),
-(2, 12.00, 'Hamburguesa de Pollo', 'Hamburguesa de Pollo', 147),
-(3, 10.00, 'Salchipapa', 'Salchipapa', 195),
-(4, 8.00, 'Papa Rellena', 'Papa Rellena', 118),
-(5, 7.00, 'Jugo de Platano', 'Jugo de Platano', 178),
+(1, 15.00, 'Hamburguesa de Carne', 'Hamburguesa de Carne', 93),
+(2, 12.00, 'Hamburguesa de Pollo', 'Hamburguesa de Pollo', 135),
+(3, 10.00, 'Salchipapa', 'Salchipapa', 185),
+(4, 8.00, 'Papa Rellena', 'Papa Rellena', 109),
+(5, 7.00, 'Jugo de Platano', 'Jugo de Platano', 169),
 (6, 7.00, 'Jugo de Papaya', 'Jugo de Papaya', 158),
 (7, 12.00, 'Leche Asada', 'Leche Asada', 129),
 (8, 5.00, 'Papas fritas', 'Papas fritas', 79),
@@ -949,7 +961,8 @@ INSERT INTO `pago` (`IDPago`, `Metodo`, `IDPagoCOM`, `IDPedidoConsumible`) VALUE
 (9, 'Efectivo', NULL, 9),
 (10, 'Efectivo', NULL, 10),
 (11, 'Efectivo', NULL, 11),
-(12, 'Tarjeta', NULL, 12);
+(12, 'Tarjeta', NULL, 12),
+(58, 'Efectivo', 1, 22);
 
 -- --------------------------------------------------------
 
@@ -982,7 +995,14 @@ INSERT INTO `pedidoconsumible` (`IDPedidoConsumible`, `IDCliente`, `IDLocal`) VA
 (12, NULL, 1),
 (13, 4, NULL),
 (14, 4, NULL),
-(15, 4, NULL);
+(15, 4, NULL),
+(16, 3, NULL),
+(17, 3, NULL),
+(18, 3, NULL),
+(19, 3, NULL),
+(20, 3, NULL),
+(21, 1, NULL),
+(22, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -1002,7 +1022,9 @@ CREATE TABLE `pedidoconsumible_consumible` (
 INSERT INTO `pedidoconsumible_consumible` (`IDConsumible`, `IDPedidoConsumible`) VALUES
 (1, 2),
 (1, 11),
+(1, 22),
 (2, 2),
+(2, 22),
 (3, 4),
 (3, 6),
 (3, 7),
@@ -1046,7 +1068,8 @@ INSERT INTO `proveedor` (`IDProveedor`, `Nombre`, `CorreoElectronico`, `Tipo`, `
 (6, 'Proveedor 6', 'proveedor6@email.com', 'Ingrediente', '789789789'),
 (7, 'JoseProveedor', 'jose@gmail.com', 'Ingrediente', '987823127'),
 (8, 'Pepe', 'pepe@gmail.com', 'Ingrediente', '123212321'),
-(9, 'Pepito', 'pepito@gmail.com', 'Ingrediente', '123212321');
+(9, 'Pepito', 'pepito@gmail.com', 'Ingrediente', '123212321'),
+(10, 'dsadsa', 'sadd', 'Ingrediente', '2024339');
 
 -- --------------------------------------------------------
 
@@ -1274,19 +1297,19 @@ ALTER TABLE `mesacomida`
 -- AUTO_INCREMENT de la tabla `pago`
 --
 ALTER TABLE `pago`
-  MODIFY `IDPago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `IDPago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidoconsumible`
 --
 ALTER TABLE `pedidoconsumible`
-  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedor`
 --
 ALTER TABLE `proveedor`
-  MODIFY `IDProveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `IDProveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `tlocal`

@@ -121,13 +121,14 @@ def guardar_detalle_pedido():
         consumible_obj = clases.Consumible(consumible_id, None, None, None, None)
         updater.update_Stock(data_base, consumible_obj)
 
-    pedido_consumible_obj = clases.PedidoConsumible(0, 1, cliente_id, 0)
+    pedido_consumible_obj = clases.PedidoConsumible(0, cliente_id, 0)
     inserter.create_pedido_consumible(data_base, pedido_consumible_obj)
 
     cursor = data_base.connection.cursor()
     cursor.execute("SELECT LAST_INSERT_ID();")
     id_pedido_consumible = cursor.fetchone()[0]
-    
+    inserter.assign_consumible_pago(data_base,pedido_consumible_obj,id_pedido_consumible)
+
     for consumible_id in productos_con_stock:
         pedido_consumible_consumible_obj = clases.PedidoConsumible_Consumible(
             consumible_id, id_pedido_consumible
@@ -195,7 +196,7 @@ def set_local(local_id):
 
 @app.route('/mantenimiento')
 def mantenimiento():
-    mantenimiento_arr = selector.get_all_mesabillar_mantenimiento(data_base)
+    mantenimiento_arr = selector.get_all_mesabillar_mantenimiento_by_id(data_base,current_local_id)
     return render_template('mantenimiento.html', mantenimientos = mantenimiento_arr)
 
 @app.route('/empleados')
@@ -280,6 +281,12 @@ def register_proveedor():
         return redirect(url_for('proveedor'))
     else:
         return render_template('registrar_proveedor.html')
+
+@app.route('/equi')
+def equi():
+    equis_arr = selector.get_all_equipamento_mantenimiento(data_base)
+    return render_template('equipamiento.html', equis = equis_arr)
+
 
 @app.context_processor
 def inject_current_local_id():

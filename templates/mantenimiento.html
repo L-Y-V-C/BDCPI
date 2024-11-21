@@ -22,6 +22,7 @@
                     <th class="header-text">Id mantenimiento</th>
                     <th class="header-text">Fecha</th>
                     <th class="header-text">Descripción</th>
+                    <th class="header-text">Id ambiente</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +33,7 @@
                         <td> {{ mantenimiento.id_manteni }}</td>
                         <td> {{ mantenimiento.m_fecha }}</td>
                         <td> {{ mantenimiento.m_descripcion }}</td>
+                        <td> {{ mantenimiento.am_idambiente }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -237,9 +237,49 @@ def proveedor_ingrediente():
     proing_arr = selector.proveedor_ingrediente(data_base)
     return render_template('proveedor_ingrediente.html', proing = proing_arr)
 
+@app.route('/registrar_proveedor_ingrediente', methods = ['GET', 'POST'])
+def register_ingrediente():
+    proveedores_arr = selector.get_all_proveedores(data_base)
+    if request.method == 'POST':
+        ingrediente = clases.Ingrediente(0, request.form['ingrediente'], request.form['cantidad'], request.form['proveedor'])
+        inserter.create_ingrediente(data_base, ingrediente)
+        return redirect(url_for('proveedor_ingrediente'))
+    else:
+        return render_template('registrar_proveedor_ingrediente.html', proveedores = proveedores_arr)
+
+@app.route('/registrar_proveedor_equipamiento', methods = ['GET', 'POST'])
+def register_equipamiento():
+    proveedores_arr = selector.get_all_proveedores(data_base)
+    if request.method == 'POST':
+        tipo = request.form['nombre_equipamiento']
+        descripcion = ""
+        if (tipo == "Bolas de Billar"):
+            descripcion = "Conjunto completo de bolas"
+        elif (tipo == "Tiza"):
+            descripcion = "Tiza para billar"
+        elif (tipo == "Racks de Billar"):
+            descripcion = "Conjunto de racks para billar"
+        else:
+            descripcion = "Palo estándar"
+        
+        equipamiento = clases.Equipamiento(0, tipo, descripcion, request.form['proveedor'], None)
+        inserter.create_equipamiento(data_base, equipamiento)
+        return redirect(url_for('proveedor_equipamiento'))
+    else:
+        return render_template('registrar_proveedor_equipamiento.html', proveedores = proveedores_arr)
+
 @app.route('/proveedor')
 def proveedor():
     return render_template('proveedor.html')
+
+@app.route('/registrar_proveedor', methods = ['GET', 'POST'])
+def register_proveedor():
+    if request.method == 'POST':
+        proveedor_obj =  clases.Proveedor(0, request.form['nombre'], request.form['correo'], "Ingrediente" , request.form['numero'])
+        inserter.create_proveedor(data_base, proveedor_obj)
+        return redirect(url_for('proveedor'))
+    else:
+        return render_template('registrar_proveedor.html')
 
 @app.context_processor
 def inject_current_local_id():

@@ -215,3 +215,18 @@ def get_all_equipamento_mantenimiento(data_base):
     for equi in arr:
         mequim.append(clases.mequi(equi[0], equi[1], equi[2], equi[3],equi[4]))
     return mequim
+
+def get_last_checkoutmesa_id(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """SELECT db_billar.get_last_checkoutmesa_id();""".format()
+    cursor.execute(sql_command)
+    result = cursor.fetchone()
+    return result[0]
+
+def get_checkoutmesa_by_id(data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_checkoutmesa_by_id('{}');""".format(id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchone()
+    checkoutmesa = clases.Checkoutmesa(arr[0], arr[1], arr[2], arr[3], arr[4])
+    return checkoutmesa

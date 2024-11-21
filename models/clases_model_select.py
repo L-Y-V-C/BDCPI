@@ -153,16 +153,16 @@ def get_empleado_by_id(data_base, id):
     empleado = clases.Empleado(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], arr[6])
     return empleado
 
-def get_all_mesabillar_mantenimiento(data_base):
+def get_all_mesabillar_mantenimiento_by_id(data_base,id):
     cursor = data_base.connection.cursor()
-    sql_command = """CALL db_billar.get_all_mesabillar_mantenimiento ();"""
+    sql_command = """CALL db_billar.get_all_mesabillar_mantenimiento_by_id ('{}');""".format(id)
     cursor.execute(sql_command)
 
     arr = cursor.fetchall()
     mantenimiento_list = []
     
     for mantenimiento in arr:
-        mantenimiento_list.append(clases.mesadbm(mantenimiento[0], mantenimiento[1], mantenimiento[2], mantenimiento[3], mantenimiento[4]))
+        mantenimiento_list.append(clases.mesadbm(mantenimiento[0], mantenimiento[1], mantenimiento[2], mantenimiento[3], mantenimiento[4], mantenimiento[5]))
     return mantenimiento_list
 
 def proveedor_equipamiento(data_base):
@@ -203,3 +203,15 @@ def get_all_proveedores (data_base):
     for proveedor in arr:
         proveedores_list.append(clases.Proveedor(proveedor[0], proveedor[1], proveedor[2], proveedor[3], proveedor[4]))
     return proveedores_list
+
+def get_all_equipamento_mantenimiento(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_all_equipamento_mantenimiento();"""
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchall()
+    mequim = []
+    
+    for equi in arr:
+        mequim.append(clases.mequi(equi[0], equi[1], equi[2], equi[3],equi[4]))
+    return mequim

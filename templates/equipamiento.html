@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    equipamiento
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Equipamiento en mantenimiento</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id equipamiento</th>
+                    <th class="header-text">Tipo</th>
+                    <th class="header-text">Fecha</th>
+                    <th class="header-text">Descripcion</th>
+                    <th class="header-text">Descripción de mantenimiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for equi in equis %}
+                    <tr>
+                        <td>{{ equi.id_equi}}</td>
+                        <td>{{ equi.tipo }}</td>
+                        <td> {{ equi.fecha }}</td>
+                        <td> {{ equi.e_descripcion }}</td>
+                        <td> {{ equi.m_descripcion }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-11-2024 a las 02:28:44
+-- Tiempo de generación: 21-11-2024 a las 02:33:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -60,6 +60,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_consumibles` ()   BEGIN
 	SELECT * FROM consumible;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_equipamento_mantenimiento` ()   BEGIN 
+    SELECT equi.IDEquipamiento, equi.Tipo,mat.Fecha, equi.Descripcion , mat.Descripción FROM mantenimiento AS mat 
+    INNER JOIN equipamiento AS equi
+    ON equi.IDMantenimiento=mat.IDMantenimiento
+    WHERE equi.IDMantenimiento=mat.IDMantenimiento;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_locales` ()   BEGIN
 	SELECT * FROM tlocal;
 END$$
@@ -73,6 +80,17 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_mesabillar_mantenimiento` (
     INNER JOIN  mesabillar AS mdb 
     ON mat.IDMantenimiento=mdb.IDMantenimiento 
     WHERE mdb.Estado='Mantenimiento';
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_mesabillar_mantenimiento_by_id` (IN `local_id` INT)   BEGIN 
+    SELECT mdb.IDMesaBillar, mdb.Tipo, mat.IDMantenimiento, mat.Fecha, mat.Descripción, am.IDAmbiente FROM mantenimiento AS mat 
+    INNER JOIN  mesabillar AS mdb 
+    ON mat.IDMantenimiento=mdb.IDMantenimiento 
+    INNER JOIN ambiente AS am ON
+    am.IDAmbiente=mdb.IDAmbiente
+    INNER JOIN tlocal AS lal ON
+    lal.IDLocal=am.IDLocal
+    WHERE mdb.Estado='Mantenimiento' AND lal.IDLocal=local_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_pedido_completo` ()   BEGIN
@@ -374,7 +392,7 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `GetFirstNullCasillero` () RETURNS IN
     RETURN firstCasillero;
 END$$
 
-CREATE DEFINER=`` FUNCTION `obtener_ultimo_proveedor` () RETURNS INT(11) DETERMINISTIC BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `obtener_ultimo_proveedor` () RETURNS INT(11) DETERMINISTIC BEGIN
     DECLARE ultimo_id INT;
     
     SELECT IDProveedor INTO ultimo_id

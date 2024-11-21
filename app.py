@@ -195,7 +195,7 @@ def set_local(local_id):
 
 @app.route('/mantenimiento')
 def mantenimiento():
-    mantenimiento_arr = selector.get_all_mesabillar_mantenimiento(data_base)
+    mantenimiento_arr = selector.get_all_mesabillar_mantenimiento_by_id(data_base,current_local_id)
     return render_template('mantenimiento.html', mantenimientos = mantenimiento_arr)
 
 @app.route('/empleados')
@@ -240,6 +240,11 @@ def proveedor_ingrediente():
 @app.route('/proveedor')
 def proveedor():
     return render_template('proveedor.html')
+
+@app.route('/equi')
+def equi():
+    equis_arr = selector.get_all_equipamento_mantenimiento(data_base)
+    return render_template('equipamiento.html', equis = equis_arr)
 
 @app.context_processor
 def inject_current_local_id():

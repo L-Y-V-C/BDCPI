@@ -266,12 +266,13 @@ class InfoLocal:
 
 
 class mesadbm:
-    def __init__(self,id_mesa_mante,m_tipo,id_manteni,m_fecha,m_descripcion):
+    def __init__(self,id_mesa_mante,m_tipo,id_manteni,m_fecha,m_descripcion,am_idambiente):
         self.id_mesa_mante=id_mesa_mante
         self.m_tipo=m_tipo
         self.id_manteni=id_manteni
         self.m_fecha=m_fecha
         self.m_descripcion=m_descripcion
+        self.am_idambiente=am_idambiente
     
 class InfoLocal:
     id_local=0
@@ -310,3 +311,11 @@ class Proveedor_equipamiento:
         self.correo=correo
         self.tipo=tipo
         self.descripcion=descripcion
+
+class mequi:
+    def __init__(self,id_equi,tipo,fecha,e_descripcion,m_descripcion):
+        self.id_equi=id_equi
+        self.tipo=tipo
+        self.fecha=fecha
+        self.e_descripcion=e_descripcion
+        self.m_descripcion=m_descripcion

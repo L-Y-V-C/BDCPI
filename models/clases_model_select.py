@@ -191,3 +191,15 @@ def proveedor_ingrediente(data_base):
         print(proi[0], proi[1], proi[2], proi[3])
         proing_list.append(clases.Proveedor_ingrediente(proi[0], proi[1], proi[2], proi[3]))
     return proing_list
+
+def get_all_proveedores (data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_all_proveedores();"""
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchall()
+    proveedores_list = []
+    
+    for proveedor in arr:
+        proveedores_list.append(clases.Proveedor(proveedor[0], proveedor[1], proveedor[2], proveedor[3], proveedor[4]))
+    return proveedores_list

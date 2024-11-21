@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    INGRESAR CLIENTES
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+<form action="/registrar_proveedor_equipamiento" id="form-data" class="form-container" method="post">
+    <div class="content-container" >
+        <h1>Ingresar Proveedor</h1>
+        <div class="select-container">
+            <h2>Proveedor Encargado</h2>
+            <select name="proveedor" required>
+                {% for proveedor in proveedores %}
+                    <option value="{{ proveedor.id }}"> {{ proveedor.nombre}}</option>    
+                {% endfor %}
+            </select>            
+        </div>
+
+        <div class="select-container">
+            <h2>Nombre de equipamiento</h2>
+            <select name="nombre_equipamiento" required>
+                <option value="Bolas de Billar">Bolas de Billar</option>
+                <option value="Palos de Billar">Palos de Billar</option>
+                <option value="Tiza">Tiza</option>
+                <option value="Racks de Billar">Racks de Billar</option>
+            </select>            
+        </div>
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+    
+</form>
+
+{% endblock %}

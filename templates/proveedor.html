@@ -7,12 +7,14 @@
 {% block customCSS %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/locales_tablas2.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/normal.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/proveedor.css') }}">
 {% endblock %}
 
 {% block body %}
 <main class="container">
     <h1 class="heading">Selecciona un Tipo de Proveedor</h1>
+    
     <div class="selection-container">
         <div class="selection-box">
             <h2>Ingredientes</h2>
@@ -24,6 +26,10 @@
             <p>Accede a la lista de proveedores de equipamiento.</p>
             <a href="/proveedor_equipamiento" class="btn-update">Seleccionar</a>
         </div>
+    </div>
+    
+    <div class="registrar">
+        <a href="/registrar_proveedor" class="btn">Añadir proveedor</a>
     </div>
 </main>
 {% endblock %}

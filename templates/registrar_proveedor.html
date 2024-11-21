@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    INGRESAR CLIENTES
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+<form action="/registrar_proveedor" id="form-data" class="form-container" method="post">
+    <div class="content-container" >
+        <h1>Ingresar Proveedor</h1>
+        <div class="inputs_container">
+            <h2>Nombre</h2>
+            <input type="text" name="nombre" placeholder="Nombre del proveedor" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Correo</h2>
+            <input type="text" name="correo" placeholder="Correo" required>
+        </div>
+        <div class="inputs_container">
+            <h2>Número</h2>
+            <input type="text" name="numero" placeholder="Número" required>
+        </div>
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+    
+</form>
+
+{% endblock %}

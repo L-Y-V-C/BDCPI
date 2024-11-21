@@ -124,15 +124,13 @@ class Equipamiento:
     id = 0
     tipo = ""
     descripcion = ""
-    id_local = 0
     id_proveedor = 0
     id_mantenimiento = 0
     
-    def __init__(self, id, tipo, descripcion, id_local, id_proveedor, id_mantenimiento):
+    def __init__(self, id, tipo, descripcion, id_proveedor, id_mantenimiento):
         self.id = id
         self.tipo = tipo
         self.descripcion = descripcion
-        self.id_local = id_local
         self.id_proveedor = id_proveedor
         self.id_mantenimiento = id_mantenimiento
 
@@ -152,13 +150,11 @@ class Proveedor:
 
 class PedidoConsumible:
     id = 0
-    cantidad = 0
     id_cliente = 0
     id_local = 0
     
-    def __init__(self, id, cantidad, id_cliente, id_local):
+    def __init__(self, id, id_cliente, id_local):
         self.id = id
-        self.cantidad = cantidad
         self.id_cliente = id_cliente
         self.id_local = id_local
 

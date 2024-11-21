@@ -69,9 +69,9 @@ def create_local(data_base, local_obj):
 
 def create_equipamiento(data_base, equipamiento_obj):
     cursor = data_base.connection.cursor()
-    sql_command = """CALL db_billar.insert_equipo(%s, %s, %s, %s, %s);"""
+    sql_command = """CALL db_billar.insert_equipo(%s, %s, %s, %s);"""
     cursor.execute(sql_command, (
-        equipamiento_obj.tipo, equipamiento_obj.descripcion, equipamiento_obj.id_local,
+        equipamiento_obj.tipo, equipamiento_obj.descripcion,
         equipamiento_obj.id_proveedor, equipamiento_obj.id_mantenimiento
     ))
     data_base.connection.commit()
@@ -87,9 +87,9 @@ def create_proveedor(data_base, proveedor_obj):
 
 def create_pedido_consumible(data_base, pedido_consumible_obj):
     cursor = data_base.connection.cursor()
-    sql_command = """CALL db_billar.insert_pedidoConsumible(%s, %s, %s);"""
+    sql_command = """CALL db_billar.insert_pedidoConsumible( %s, %s);"""
     cursor.execute(sql_command, (
-        pedido_consumible_obj.cantidad, pedido_consumible_obj.id_cliente, 
+        pedido_consumible_obj.id_cliente, 
         pedido_consumible_obj.id_local
     ))
     data_base.connection.commit()
@@ -150,4 +150,20 @@ def create_ingrediente_consumible(data_base, ingrediente_consumible_obj):
     cursor.execute(sql_command, (
         ingrediente_consumible_obj.id_ingrediente, ingrediente_consumible_obj.id_consumible
     ))
+    data_base.connection.commit()
+    
+def create_proveedor_ingrediente(data_base, proveedor_obj, ingrediente_obj):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.create_proveedor_ingrediente(%s, %s, %s, %s, %s, %s);"""
+    cursor.execute(sql_command, (
+        proveedor_obj.nombre, proveedor_obj.correo_electronico, proveedor_obj.tipo, proveedor_obj.telefono, ingrediente_obj.nombre, ingrediente_obj.cantidad
+    ))
+    data_base.connection.commit()
+
+def assign_consumible_pago(data_base,pedido_consumible_obj,id_pedido_consumible):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.assign_consumible_pago('{}','{}');""".format(
+        pedido_consumible_obj.id_cliente,id_pedido_consumible
+    )
+    cursor.execute(sql_command)
     data_base.connection.commit()

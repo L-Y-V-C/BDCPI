@@ -30,7 +30,7 @@ body {
 .heading {
     font-size: 2.5rem;
     color: white;
-    background: rgba(0, 0, 0, 0.7);
+    background: #1E314A;
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 30px;
@@ -63,7 +63,7 @@ body {
 
 .selection-box h2 {
     font-size: 2rem;
-    color: #007BFF;
+    color: #42566F;
     margin-bottom: 15px;
     text-transform: uppercase;
 }

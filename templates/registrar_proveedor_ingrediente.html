@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    INGRESAR CLIENTES
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+<form action="/registrar_proveedor_ingrediente" id="form-data" class="form-container" method="post">
+    <div class="content-container" >
+        <h1>Ingresar Proveedor</h1>
+        <div class="select-container">
+            <h2>Proveedor Encargado</h2>
+            <select name="proveedor" required>
+                {% for proveedor in proveedores %}
+                    <option value="{{ proveedor.id }}"> {{ proveedor.nombre}}</option>    
+                {% endfor %}
+            </select>            
+        </div>
+
+        <div class="select-container">
+            <h2>Nombre de ingrediente</h2>
+            <select name="ingrediente" required>
+                <option value="Queso">Queso</option>
+                <option value="Jamon">Jamon</option>
+                <option value="Pan">Pan</option>
+                <option value="Papaya">Papaya</option>
+                <option value="Banana">Banana</option>
+                <option value="Leche">Leche</option>
+                <option value="Tomate">Tomate</option>
+                <option value="Lechuga">Lechuga</option>
+                <option value="Aceite">Aceite</option>
+                <option value="Mayonesa">Mayonesa</option>
+                <option value="Carne molida">Carne molida</option>
+                <option value="Pollo">Pollo</option>
+                <option value="Salchichón">Salchichón</option>
+                <option value="Arroz">Arroz</option>
+                <option value="Papas">Papas</option>
+                <option value="Aguacate">Aguacate</option>
+                <option value="Mantequilla">Mantequilla</option>
+                <option value="Harina">Harina</option>
+                <option value="Mostaza">Mostaza</option>
+                <option value="Salsa">Salsa</option>
+            </select>            
+        </div>
+        <div class="inputs_container">
+            <h2>Cantidad de ingrediente</h2>
+            <input type="text" name="cantidad" placeholder="Cantidad" required>
+        </div>
+        <button type="submit" class="btn">Guardar cambios</button>
+    </div>
+    
+</form>
+
+{% endblock %}

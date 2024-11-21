@@ -121,13 +121,14 @@ def guardar_detalle_pedido():
         consumible_obj = clases.Consumible(consumible_id, None, None, None, None)
         updater.update_Stock(data_base, consumible_obj)
 
-    pedido_consumible_obj = clases.PedidoConsumible(0, 1, cliente_id, 0)
+    pedido_consumible_obj = clases.PedidoConsumible(0, cliente_id, 0)
     inserter.create_pedido_consumible(data_base, pedido_consumible_obj)
 
     cursor = data_base.connection.cursor()
     cursor.execute("SELECT LAST_INSERT_ID();")
     id_pedido_consumible = cursor.fetchone()[0]
-    
+    inserter.assign_consumible_pago(data_base,pedido_consumible_obj,id_pedido_consumible)
+
     for consumible_id in productos_con_stock:
         pedido_consumible_consumible_obj = clases.PedidoConsumible_Consumible(
             consumible_id, id_pedido_consumible
@@ -195,7 +196,7 @@ def set_local(local_id):
 
 @app.route('/mantenimiento')
 def mantenimiento():
-    mantenimiento_arr = selector.get_all_mesabillar_mantenimiento(data_base)
+    mantenimiento_arr = selector.get_all_mesabillar_mantenimiento_by_id(data_base,current_local_id)
     return render_template('mantenimiento.html', mantenimientos = mantenimiento_arr)
 
 @app.route('/empleados')
@@ -237,9 +238,55 @@ def proveedor_ingrediente():
     proing_arr = selector.proveedor_ingrediente(data_base)
     return render_template('proveedor_ingrediente.html', proing = proing_arr)
 
+@app.route('/registrar_proveedor_ingrediente', methods = ['GET', 'POST'])
+def register_ingrediente():
+    proveedores_arr = selector.get_all_proveedores(data_base)
+    if request.method == 'POST':
+        ingrediente = clases.Ingrediente(0, request.form['ingrediente'], request.form['cantidad'], request.form['proveedor'])
+        inserter.create_ingrediente(data_base, ingrediente)
+        return redirect(url_for('proveedor_ingrediente'))
+    else:
+        return render_template('registrar_proveedor_ingrediente.html', proveedores = proveedores_arr)
+
+@app.route('/registrar_proveedor_equipamiento', methods = ['GET', 'POST'])
+def register_equipamiento():
+    proveedores_arr = selector.get_all_proveedores(data_base)
+    if request.method == 'POST':
+        tipo = request.form['nombre_equipamiento']
+        descripcion = ""
+        if (tipo == "Bolas de Billar"):
+            descripcion = "Conjunto completo de bolas"
+        elif (tipo == "Tiza"):
+            descripcion = "Tiza para billar"
+        elif (tipo == "Racks de Billar"):
+            descripcion = "Conjunto de racks para billar"
+        else:
+            descripcion = "Palo estándar"
+        
+        equipamiento = clases.Equipamiento(0, tipo, descripcion, request.form['proveedor'], None)
+        inserter.create_equipamiento(data_base, equipamiento)
+        return redirect(url_for('proveedor_equipamiento'))
+    else:
+        return render_template('registrar_proveedor_equipamiento.html', proveedores = proveedores_arr)
+
 @app.route('/proveedor')
 def proveedor():
     return render_template('proveedor.html')
+
+@app.route('/registrar_proveedor', methods = ['GET', 'POST'])
+def register_proveedor():
+    if request.method == 'POST':
+        proveedor_obj =  clases.Proveedor(0, request.form['nombre'], request.form['correo'], "Ingrediente" , request.form['numero'])
+        inserter.create_proveedor(data_base, proveedor_obj)
+        return redirect(url_for('proveedor'))
+    else:
+        return render_template('registrar_proveedor.html')
+
+@app.route('/equi')
+def equi():
+    equis_arr = selector.get_all_equipamento_mantenimiento(data_base)
+    return render_template('equipamiento.html', equis = equis_arr)
+
 
 @app.context_processor
 def inject_current_local_id():

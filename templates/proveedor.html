@@ -7,12 +7,16 @@
 {% block customCSS %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/locales_tablas2.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/normal.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/proveedor.css') }}">
 {% endblock %}
 
 {% block body %}
 <main class="container">
     <h1 class="heading">Selecciona un Tipo de Proveedor</h1>
+    <h2 class="heading2"><a href='/equi' class="btn-maintenance" style="background-color: #54616f; color: white; font-weight: bold; padding: 10px 15px; border-radius: 5px; text-decoration: none;font-size: 1.5rem;">
+        Equipamiento en mantenimiento
+    </a></h2>
     <div class="selection-container">
         <div class="selection-box">
             <h2>Ingredientes</h2>
@@ -24,6 +28,10 @@
             <p>Accede a la lista de proveedores de equipamiento.</p>
             <a href="/proveedor_equipamiento" class="btn-update">Seleccionar</a>
         </div>
+    </div>
+    
+    <div class="registrar">
+        <a href="/registrar_proveedor" class="btn">Añadir proveedor</a>
     </div>
 </main>
 {% endblock %}

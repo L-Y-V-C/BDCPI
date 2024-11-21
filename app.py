@@ -73,13 +73,31 @@ def update_cliente_by_id(id):
 @app.route('/update_mesa/<int:id>', methods = ['GET', 'POST'])
 def update_mesa_info(id):
     mesa_to_update = selector.get_mesa_by_id(data_base, id)
+    clientes_arr = selector.get_all_clientes(data_base)
     if request.method == 'POST':
+        preciohora = 0
+        if mesa_to_update.tipo == 'Normal':
+            preciohora = 7
+        elif mesa_to_update.tipo == 'Carambola':
+            preciohora = 6
+        else:
+            preciohora = 8
+        checkoutmesa_obj = clases.Checkoutmesa(0,preciohora, request.form['hora_fin'], request.form['hora_inicio'], current_local_id)
+        inserter.create_checkoutmesa(data_base, checkoutmesa_obj)
+        last_checkoutmesa_id = selector.get_last_checkoutmesa_id(data_base)
+        pago_obj = clases.Pago(0, None, last_checkoutmesa_id, None)
+        inserter.create_pago(data_base, pago_obj)
         mesa_to_update.estado = request.form['estado']
-        print("ESTADO: " , mesa_to_update.estado)
+        mesa_to_update.id_pago_com = last_checkoutmesa_id
+        cliente_id = request.form.get('clienteSelect')
+        cliente_to_update = selector.get_cliente_by_id(data_base, cliente_id)
+        cliente_to_update.id_pago_com = last_checkoutmesa_id
+        cliente_to_update.id_mesa_billar = mesa_to_update.id
         updater.update_mesa_billar(data_base, mesa_to_update)
+        updater.update_cliente(data_base, cliente_to_update)
         return redirect(url_for('mesas'))
     else:
-        return render_template('update_mesa.html', mesa = mesa_to_update)
+        return render_template('update_mesa.html', mesa = mesa_to_update, clientes = clientes_arr)
 
 #comidas
 @app.route('/comidas')

@@ -191,3 +191,18 @@ def proveedor_ingrediente(data_base):
         print(proi[0], proi[1], proi[2], proi[3])
         proing_list.append(clases.Proveedor_ingrediente(proi[0], proi[1], proi[2], proi[3]))
     return proing_list
+
+def get_last_checkoutmesa_id(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """SELECT db_billar.get_last_checkoutmesa_id();""".format()
+    cursor.execute(sql_command)
+    result = cursor.fetchone()
+    return result[0]
+
+def get_checkoutmesa_by_id(data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_checkoutmesa_by_id('{}');""".format(id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchone()
+    checkoutmesa = clases.Checkoutmesa(arr[0], arr[1], arr[2], arr[3], arr[4])
+    return checkoutmesa

@@ -308,3 +308,29 @@ class mequi:
         self.fecha=fecha
         self.e_descripcion=e_descripcion
         self.m_descripcion=m_descripcion
+
+class pagoListConsumible:
+    def __init__(self, id_pago, metodo, idpc, nombre, precio):
+        self.id_pago = id_pago
+        self.metodo = metodo
+        self.idpc = idpc
+        self.nombre = nombre
+        self.precio = precio
+
+class pagoListMesa:
+    def __init__(self, id_pago, metodo, idpc, precioHora, inicio, fin, monto):
+        self.id_pago = id_pago
+        self.metodo = metodo
+        self.idpc = idpc
+        self.precioHora = precioHora
+        self.inicio = inicio
+        self.fin = fin
+        self.monto = monto
+
+class pagoTotalConsumibles:
+    def __init__(self, total):
+        self.total = total
+
+class pagoTotalMesas:
+    def __init__(self, total):
+        self.total = total

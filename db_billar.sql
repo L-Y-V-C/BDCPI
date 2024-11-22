@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 22, 2024 at 07:49 AM
+-- Generation Time: Nov 22, 2024 at 09:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -286,6 +286,24 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_monto_total_cliente` (IN `clien
     SELECT MontoMesa, IFNULL(MontoTotalConsumibles, 0), (MontoMesa + IFNULL(MontoTotalConsumibles,0)) AS MontoTotal;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_pagoListConsumible` ()   BEGIN
+	SELECT p.IDPago, p.Metodo,p.IDPedidoConsumible, c.Nombre, c.Precio FROM pago p 
+	INNER JOIN pedidoconsumible pc ON p.IDPedidoConsumible = pc.IDPedidoConsumible
+	INNER JOIN pedidoconsumible_consumible pcc ON pcc.IDPedidoConsumible = pc.IDPedidoConsumible
+	INNER JOIN consumible c ON c.IDConsumible = pcc.IDConsumible
+	ORDER BY p.IDPago ASC;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_pagoListMesa` ()   BEGIN
+	SELECT p.IDPago, p.Metodo,p.IDPagoCOM, com.PrecioHora, com.HoraInicio, com.HoraFin,
+		FORMAT((EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
+	    + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
+	    - EXTRACT(MINUTE FROM com.HoraInicio)/60.0),2) * com.PrecioHora AS MontoMesa
+	FROM pago p 
+	INNER JOIN checkoutmesa com ON p.IDPagoCOM = com.IDPagoCOM
+	GROUP BY com.IDPagoCOM;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_precio_promedio_consumibles` ()   BEGIN 
     SELECT 
     AVG(consumible.Precio) AS PrecioPromedio
@@ -476,6 +494,27 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `get_last_checkoutmesa_id` () RETURNS
     RETURN last_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_totalPagoListConsumible` () RETURNS DECIMAL(10,2) DETERMINISTIC BEGIN
+    DECLARE total DECIMAL(10,2);
+    SELECT SUM(c.Precio) INTO total
+    FROM pago p
+    INNER JOIN pedidoconsumible pc ON p.IDPedidoConsumible = pc.IDPedidoConsumible
+    INNER JOIN pedidoconsumible_consumible pcc ON pcc.IDPedidoConsumible = pc.IDPedidoConsumible
+    INNER JOIN consumible c ON c.IDConsumible = pcc.IDConsumible;
+    
+    RETURN total;
+END$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_totalPagoListMesa` () RETURNS DECIMAL(10,2) DETERMINISTIC BEGIN
+	DECLARE total DECIMAL(10,2);
+	SELECT SUM(FORMAT((EXTRACT(HOUR FROM com.HoraFin) - EXTRACT(HOUR FROM com.HoraInicio) 
+	    + EXTRACT(MINUTE FROM com.HoraFin)/60.0 
+	    - EXTRACT(MINUTE FROM com.HoraInicio)/60.0),2) * com.PrecioHora) INTO total
+	FROM checkoutmesa com;
+
+	RETURN total;
+END$$
+
 CREATE DEFINER=`root`@`localhost` FUNCTION `IDpagocom_get` (`IDclient` INT) RETURNS INT(11) DETERMINISTIC BEGIN
 	DECLARE idpagocom INT;
     SELECT cliente.IDPagoCOM INTO idpagocom 
@@ -596,17 +635,18 @@ INSERT INTO `checkoutmesa` (`IDPagoCOM`, `PrecioHora`, `HoraFin`, `HoraInicio`, 
 (13, 7.00, '10:30:00', '09:00:00', 1),
 (14, 7.00, '10:00:00', '08:00:00', 1),
 (15, 7.00, '10:00:00', '08:00:00', 1),
-(16, 7.00, '08:00:00', '09:00:00', 1),
+(16, 7.00, '08:00:00', '07:30:00', 1),
 (17, 7.00, '08:00:00', '08:00:00', 1),
 (18, 7.00, '00:00:00', '00:00:00', 1),
 (19, 7.00, NULL, NULL, 1),
-(20, 7.00, '13:00:00', '14:00:00', 1),
-(21, 7.00, '13:00:00', '15:00:00', 1),
-(22, 7.00, '08:00:00', '10:00:00', 1),
-(23, 7.00, '04:00:00', '05:00:00', 1),
+(20, 7.00, '13:00:00', '08:00:00', 1),
+(21, 7.00, '13:00:00', '10:00:00', 1),
+(22, 7.00, '08:00:00', '07:00:00', 1),
+(23, 7.00, '04:00:00', '03:00:00', 1),
 (24, 7.00, '10:00:00', '08:00:00', 1),
 (25, 7.00, '09:00:00', '08:00:00', 1),
-(26, 7.00, '15:30:00', '14:00:00', 1);
+(26, 7.00, '15:30:00', '14:00:00', 1),
+(27, 7.00, '13:00:00', '10:00:00', 3);
 
 -- --------------------------------------------------------
 
@@ -664,9 +704,9 @@ CREATE TABLE `consumible` (
 INSERT INTO `consumible` (`IDConsumible`, `Precio`, `Descripcion`, `Nombre`, `Stock`) VALUES
 (1, 15.00, 'Hamburguesa de Carne', 'Hamburguesa de Carne', 93),
 (2, 12.00, 'Hamburguesa de Pollo', 'Hamburguesa de Pollo', 140),
-(3, 10.00, 'Salchipapa', 'Salchipapa', 190),
-(4, 8.00, 'Papa Rellena', 'Papa Rellena', 114),
-(5, 7.00, 'Jugo de Platano', 'Jugo de Platano', 176),
+(3, 10.00, 'Salchipapa', 'Salchipapa', 188),
+(4, 8.00, 'Papa Rellena', 'Papa Rellena', 112),
+(5, 7.00, 'Jugo de Platano', 'Jugo de Platano', 174),
 (6, 7.00, 'Jugo de Papaya', 'Jugo de Papaya', 156),
 (7, 12.00, 'Leche Asada', 'Leche Asada', 127),
 (8, 5.00, 'Papas fritas', 'Papas fritas', 78),
@@ -1098,7 +1138,10 @@ INSERT INTO `pago` (`IDPago`, `Metodo`, `IDPagoCOM`, `IDPedidoConsumible`) VALUE
 (40, 'Efectivo', 25, NULL),
 (42, 'Efectivo', 25, 28),
 (43, 'Tarjeta', 26, NULL),
-(44, 'Tarjeta', 26, 29);
+(44, 'Tarjeta', 26, 29),
+(45, 'Efectivo', 13, 30),
+(46, 'Efectivo', 27, NULL),
+(47, 'Efectivo', 27, 31);
 
 -- --------------------------------------------------------
 
@@ -1145,7 +1188,9 @@ INSERT INTO `pedidoconsumible` (`IDPedidoConsumible`, `IDCliente`, `IDLocal`) VA
 (26, NULL, NULL),
 (27, NULL, NULL),
 (28, NULL, NULL),
-(29, NULL, NULL);
+(29, NULL, NULL),
+(30, 2, NULL),
+(31, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1182,6 +1227,8 @@ INSERT INTO `pedidoconsumible_consumible` (`IDConsumible`, `IDPedidoConsumible`)
 (3, 20),
 (3, 22),
 (3, 28),
+(3, 30),
+(3, 31),
 (4, 3),
 (4, 8),
 (4, 15),
@@ -1189,8 +1236,12 @@ INSERT INTO `pedidoconsumible_consumible` (`IDConsumible`, `IDPedidoConsumible`)
 (4, 22),
 (4, 26),
 (4, 29),
+(4, 30),
+(4, 31),
 (5, 26),
 (5, 29),
+(5, 30),
+(5, 31),
 (6, 24),
 (6, 26),
 (7, 14),
@@ -1412,7 +1463,7 @@ ALTER TABLE `casillero`
 -- AUTO_INCREMENT for table `checkoutmesa`
 --
 ALTER TABLE `checkoutmesa`
-  MODIFY `IDPagoCOM` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `IDPagoCOM` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `cliente`
@@ -1460,13 +1511,13 @@ ALTER TABLE `mesacomida`
 -- AUTO_INCREMENT for table `pago`
 --
 ALTER TABLE `pago`
-  MODIFY `IDPago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `IDPago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `pedidoconsumible`
 --
 ALTER TABLE `pedidoconsumible`
-  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `IDPedidoConsumible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `proveedor`

@@ -6,6 +6,7 @@
 
 {% block customCSS %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/list_clientes_mesa.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -30,6 +31,7 @@
             <h2>Estado</h2>
             <div class="select-container">
                 <select name="estado" required>
+                    <option value="" disabled selected>{{ mesa.estado }}</option>
                     <option value="Disponible">Disponible</option>
                     <option value="En uso">En uso</option>
                     <option value="Mantenimiento">Mantenimiento</option>
@@ -37,8 +39,37 @@
             </div>
         </div>
         
-        
         <button type="submit" class="btn">Guardar cambios</button>
+        
+        {% if mesa.estado == "Disponible" %}
+            <div class="inputs_container-COM">
+                <h2>Asignar cliente</h2>
+                <div id="clientes-container-COM" class="select-container">
+                    <div class="cliente-group-COM">
+                        <select name="clienteSelect" id="clienteSelect">
+                            <option value="" disabled selected>Seleccione un cliente</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>        
+            <div class="inputs_container-COM">
+                <h2>Detalles</h2>
+                <div class="preciohora-group-COM">
+                    <h3><label for="preciohora">Precio por hora</label></h3>
+                    <input type="text" size="3" id="preciohora" name="preciohora"
+                         value="S/.{% if mesa.tipo == 'Normal' %}7{% elif mesa.tipo == 'Carambola' %}6{% else %}8{% endif %}" readonly>
+                </div>
+                <div class="hora-group-COM">
+                    <h3><label for="hora_inicio">Hora de inicio</label></h3>
+                    <input type="time" id="hora_inicio" name="hora_inicio">
+                    <h3><label for="hora_fin">Hora de fin</label></h3>
+                    <input type="time" id="hora_fin" name="hora_fin">
+                </div>
+            </div>
+        {% endif %}
     </div>
 </form>
 

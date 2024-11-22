@@ -1,0 +1,45 @@
+#clientes-container-COM {
+    margin-bottom: 20px;
+}
+
+.cliente-group-COM select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.inputs_container-COM {
+    margin-top: 20px;
+}
+
+.preciohora-group-COM, .hora-group-COM {
+    margin-bottom: 15px;
+}
+
+.preciohora-group-COM label, .hora-group-COM label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.preciohora-group-COM input, .hora-group-COM input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Asegura que los campos HoraInicio y HoraFin se vean bien */
+.hora-group-COM input[type="time"] {
+    width: 48%;
+    display: inline-block;
+    margin-right: 4%;
+}
+
+.hora-group-COM input[type="time"]:last-child {
+    margin-right: 0;
+}

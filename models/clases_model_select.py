@@ -104,8 +104,7 @@ def get_monto_mesa(data_base, cliente_id):
     cursor.execute(sql_command)
     arr = cursor.fetchone()
     if arr == None:
-        print("boi is NONe")
-        monto_mesa = clases.MontoMesa(None,None,None,"00:00:00","00:00:00",0)
+        monto_mesa = clases.MontoMesa(None, None, None, "00:00:00", "00:00:00", 0)
         return monto_mesa
     monto_mesa = clases.MontoMesa(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
     return monto_mesa
@@ -117,8 +116,7 @@ def get_monto_consumibles(data_base, cliente_id):
     arr = cursor.fetchall()
     monto_consumibles_list = []
     for monto_consumible in arr:
-        monto_consumibles_list.append(clases.MontoConsumible(monto_consumible[0], monto_consumible[1], monto_consumible[2], monto_consumible[3], 
-            monto_consumible[4], monto_consumible[5], monto_consumible[6]))
+        monto_consumibles_list.append(clases.MontoConsumible(monto_consumible[0], monto_consumible[1], monto_consumible[2], monto_consumible[3], monto_consumible[4]))
     return monto_consumibles_list
 
 def get_monto_total_cliente(data_base, cliente_id):
@@ -215,3 +213,69 @@ def get_all_equipamento_mantenimiento(data_base):
     for equi in arr:
         mequim.append(clases.mequi(equi[0], equi[1], equi[2], equi[3],equi[4]))
     return mequim
+
+def get_last_checkoutmesa_id(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """SELECT db_billar.get_last_checkoutmesa_id();""".format()
+    cursor.execute(sql_command)
+    result = cursor.fetchone()
+    return result[0]
+
+def get_checkoutmesa_by_id(data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_checkoutmesa_by_id('{}');""".format(id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchone()
+    checkoutmesa = clases.Checkoutmesa(arr[0], arr[1], arr[2], arr[3], arr[4])
+    return checkoutmesa
+
+def get_consumibles_by_local_id (data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_consumibles_by_local_id('{}');""".format(id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    consumibles_list = []
+    for consumibles in arr:
+        consumibles_list.append(clases.Consumible(consumibles[0], consumibles[1], consumibles[2], consumibles[3], consumibles[4]))
+    return consumibles_list
+
+def get_ingredientes_by_consumible_id (data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_ingredientes_by_consumible_id('{}');""".format(id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    ingredientes_list = []
+    for ingrediente in arr:
+        ingredientes_list.append(clases.Ingrediente(ingrediente[0], ingrediente[1], ingrediente[2], None))
+    return ingredientes_list
+
+def get_mesa_comida_by_local_id (data_base, id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_mesa_comida_by_local_id('{}');""".format(id)
+    cursor.execute(sql_command)
+    
+    arr = cursor.fetchall()
+    mesa_comida_list = []
+    for mesa_comida in arr:
+        mesa_comida_list.append(clases.Mesacomida(mesa_comida[0], mesa_comida[1], mesa_comida[2], mesa_comida[3]))
+    return mesa_comida_list
+
+def get_ambientes_nombre_by_mesa_id(data_base, mesas_arr):
+    cursor = data_base.connection.cursor()
+    #nombres_list = []
+    counter = 0
+    for mesa in mesas_arr:
+        sql_command = """SELECT db_billar.get_ambiente_name_by_id('{}');""".format(mesa.id)
+        cursor.execute(sql_command.format(mesa))
+        mesas_arr[counter].id_ambiente = cursor.fetchone()[0]
+        counter += 1
+    
+def get_all_ambientes(data_base,local_id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_all_ambientes('{}');""".format(local_id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    ambientes_list = []
+    for ambiente in arr:
+        ambientes_list.append(clases.Ambiente(ambiente[0],ambiente[1],ambiente[2], ambiente[3]))
+    return ambientes_list

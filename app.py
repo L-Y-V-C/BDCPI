@@ -26,7 +26,6 @@ def index():
 #Mesas
 @app.route('/mesas')
 def mesas():
-    #mesas_arr = selector.get_all_mesabillar(data_base)
     mesas_arr = selector.get_mesabillar_by_local_id(data_base, current_local_id)
     return render_template('mesas.html', mesas = mesas_arr)
 #Pagos
@@ -73,13 +72,35 @@ def update_cliente_by_id(id):
 @app.route('/update_mesa/<int:id>', methods = ['GET', 'POST'])
 def update_mesa_info(id):
     mesa_to_update = selector.get_mesa_by_id(data_base, id)
+    clientes_arr = selector.get_all_clientes(data_base)
     if request.method == 'POST':
-        mesa_to_update.estado = request.form['estado']
-        print("ESTADO: " , mesa_to_update.estado)
+        if request.form.get('estado') == 'Mantenimiento' or request.form.get('estado') == 'Disponible':
+            mesa_to_update.estado = request.form.get('estado')
+            updater.update_mesa_billar(data_base, mesa_to_update)
+            return redirect(url_for('mesas'))
+        preciohora = 0
+        if mesa_to_update.tipo == 'Normal':
+            preciohora = 7
+        elif mesa_to_update.tipo == 'Carambola':
+            preciohora = 6
+        else:
+            preciohora = 8
+        checkoutmesa_obj = clases.Checkoutmesa(0,preciohora, request.form.get('hora_fin'), request.form.get('hora_inicio'), current_local_id)
+        inserter.create_checkoutmesa(data_base, checkoutmesa_obj)
+        last_checkoutmesa_id = selector.get_last_checkoutmesa_id(data_base)
+        pago_obj = clases.Pago(0, None, None, last_checkoutmesa_id)
+        inserter.create_pago(data_base, pago_obj)
+        mesa_to_update.estado = request.form.get('estado')
+        mesa_to_update.id_pago_com = last_checkoutmesa_id
+        cliente_id = request.form.get('clienteSelect')
+        cliente_to_update = selector.get_cliente_by_id(data_base, cliente_id)
+        cliente_to_update.id_pago_com = last_checkoutmesa_id
+        cliente_to_update.id_mesa_billar = mesa_to_update.id
         updater.update_mesa_billar(data_base, mesa_to_update)
+        updater.update_cliente(data_base, cliente_to_update)
         return redirect(url_for('mesas'))
     else:
-        return render_template('update_mesa.html', mesa = mesa_to_update)
+        return render_template('update_mesa.html', mesa = mesa_to_update, clientes = clientes_arr)
 
 #comidas
 @app.route('/comidas')
@@ -154,8 +175,9 @@ def montos_cliente(cliente_id):
 #REALIZAR PAGO
 @app.route('/realizarPago/<int:cliente_id>', methods=['GET', 'POST'])
 def realizar_pago(cliente_id):
-    updater.pagar_monto_total(data_base, cliente_id)
-    return render_template('clientes_table.html')
+    metodo_pago = request.args['metodo']
+    updater.pagar_monto_total(data_base, cliente_id, metodo_pago)
+    return redirect(url_for('clientes'))
 
 #LOCALES
 @app.route('/local')
@@ -287,6 +309,44 @@ def equi():
     equis_arr = selector.get_all_equipamento_mantenimiento(data_base)
     return render_template('equipamiento.html', equis = equis_arr)
 
+#
+@app.route('/consumibles')
+def consumibles():
+    consumibles_arr = selector.get_consumibles_by_local_id(data_base, current_local_id)
+    return render_template('consumibles.html', consumibles = consumibles_arr)
+
+@app.route('/view_ingredients/<int:id>', methods = ['GET', 'POST'])
+def view_ingredients(id):
+    ingredientes_arr = selector.get_ingredientes_by_consumible_id(data_base, id)
+    print("MESA ID INGREDIENTES: ", id)
+    return render_template('ingredientes.html', ingredientes = ingredientes_arr, mesa_id = id)
+
+@app.route('/mesas_comida')
+def mesas_comida():
+    mesas_arr = selector.get_mesa_comida_by_local_id(data_base, current_local_id)
+    selector.get_ambientes_nombre_by_mesa_id(data_base, mesas_arr)
+    return render_template('mesas_comida.html', mesas = mesas_arr)
+
+@app.route('/registrar_mesa_billar', methods = ['GET', 'POST'])
+def registrar_mesa_billar():
+    ambientes_arr = selector.get_all_ambientes(data_base,current_local_id)
+    if request.method == 'POST':
+        mesa_billar = clases.Mesabillar(0, request.form['tipo_mesa'], 'Disponible', None,None,int(request.form['id_ambiente']))
+        inserter.create_mesabillar(data_base, mesa_billar)
+    return render_template('registrar_mesa_billar.html', ambientes=ambientes_arr)
+
+@app.route('/registrar_mesa_comida', methods = ['GET', 'POST'])
+def registrar_mesa_comida():
+    ambientes_arr = selector.get_all_ambientes(data_base,current_local_id)
+    if request.method == 'POST':
+        mesa_comida = clases.Mesacomida(
+            0,
+            int(request.form['capacidad']),
+            int(request.form['numero']),
+            int(request.form['id_ambiente'])
+        )
+        inserter.create_mesacomida(data_base, mesa_comida)
+    return render_template('registrar_mesa_comida.html', ambientes=ambientes_arr)
 
 @app.context_processor
 def inject_current_local_id():

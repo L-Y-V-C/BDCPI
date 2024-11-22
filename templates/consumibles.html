@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    MESAS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Consumibles</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id</th>
+                    <th class="header-text">Nombre</th>
+                    <th class="header-text">Descripción</th>
+                    <th class="header-text">Precio</th>
+                    <th class="header-text">Stock</th>
+                    <th class="header-text">Ingredientes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for consumible in consumibles %}
+                    <tr>
+                        <td>{{ consumible.id }}</td>
+                        <td>{{ consumible.nombre }}</td>
+                        <td>{{ consumible.descripcion }}</td>
+                        <td>{{ consumible.precio }}</td>
+                        <td>{{ consumible.stock }}</td>
+                        <td>
+                            <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                                <a href="/view_ingredients/{{ consumible.id }}" class="btn-update">Ver ingredientes</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

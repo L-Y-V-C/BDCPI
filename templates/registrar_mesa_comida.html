@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    REGISTRAR MESA DE COMIDA
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+<form action="/registrar_mesa_comida" id="form-data" class="form-container" method="post">
+    <div class="content-container">
+        <h1>Registrar Mesa de Comida</h1>
+        
+        <div class="select-container">
+            <h2>Capacidad</h2>
+            <select name="capacidad" required>
+                {% for i in range(1, 9) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="select-container">
+            <h2>Número</h2>
+            <input name="numero" required>
+        </div>
+        <div class="select-container">
+            <h2>Ambiente</h2>
+            <select name="id_ambiente" required>
+                {% for ambiente in ambientes %}
+                    <option value="{{ ambiente.id }}">{{ ambiente.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn">Guardar Mesa</button>
+    </div>
+</form>
+{% endblock %}

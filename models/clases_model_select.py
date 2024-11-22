@@ -272,3 +272,12 @@ def get_ambientes_nombre_by_mesa_id(data_base, mesas_arr):
         mesas_arr[counter].id_ambiente = cursor.fetchone()[0]
         counter += 1
     
+def get_all_ambientes(data_base,local_id):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_all_ambientes('{}');""".format(local_id)
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    ambientes_list = []
+    for ambiente in arr:
+        ambientes_list.append(clases.Ambiente(ambiente[0],ambiente[1],ambiente[2], ambiente[3]))
+    return ambientes_list

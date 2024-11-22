@@ -322,6 +322,27 @@ def mesas_comida():
     selector.get_ambientes_nombre_by_mesa_id(data_base, mesas_arr)
     return render_template('mesas_comida.html', mesas = mesas_arr)
 
+@app.route('/registrar_mesa_billar', methods = ['GET', 'POST'])
+def registrar_mesa_billar():
+    ambientes_arr = selector.get_all_ambientes(data_base,current_local_id)
+    if request.method == 'POST':
+        mesa_billar = clases.Mesabillar(0, request.form['tipo_mesa'], 'Disponible', None,None,int(request.form['id_ambiente']))
+        inserter.create_mesabillar(data_base, mesa_billar)
+    return render_template('registrar_mesa_billar.html', ambientes=ambientes_arr)
+
+@app.route('/registrar_mesa_comida', methods = ['GET', 'POST'])
+def registrar_mesa_comida():
+    ambientes_arr = selector.get_all_ambientes(data_base,current_local_id)
+    if request.method == 'POST':
+        mesa_comida = clases.Mesacomida(
+            0,
+            int(request.form['capacidad']),
+            int(request.form['numero']),
+            int(request.form['id_ambiente'])
+        )
+        inserter.create_mesacomida(data_base, mesa_comida)
+    return render_template('registrar_mesa_comida.html', ambientes=ambientes_arr)
+
 @app.context_processor
 def inject_current_local_id():
     global current_local_id

@@ -265,7 +265,7 @@ def get_ambientes_nombre_by_mesa_id(data_base, mesas_arr):
     #nombres_list = []
     counter = 0
     for mesa in mesas_arr:
-        sql_command = """SELECT db_billar.get_ambiente_name_by_id('{}');""".format(mesa.id)
+        sql_command = """SELECT db_billar.get_ambiente_name_by_id('{}');""".format(mesa.id_ambiente)
         cursor.execute(sql_command.format(mesa))
         mesas_arr[counter].id_ambiente = cursor.fetchone()[0]
         counter += 1

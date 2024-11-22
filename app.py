@@ -313,7 +313,8 @@ def consumibles():
 @app.route('/view_ingredients/<int:id>', methods = ['GET', 'POST'])
 def view_ingredients(id):
     ingredientes_arr = selector.get_ingredientes_by_consumible_id(data_base, id)
-    return render_template('ingredientes.html', ingredientes = ingredientes_arr)
+    print("MESA ID INGREDIENTES: ", id)
+    return render_template('ingredientes.html', ingredientes = ingredientes_arr, mesa_id = id)
 
 @app.route('/mesas_comida')
 def mesas_comida():

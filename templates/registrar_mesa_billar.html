@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    REGISTRAR MESA DE BILLAR
+{% endblock %}
+
+{% block customCSS %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normal.css') }}">
+{% endblock %}
+
+{% block body %}
+<form action="/registrar_mesa_billar" id="form-data" class="form-container" method="post">
+    <div class="content-container">
+        <h1>Registrar Mesa de Billar</h1>
+        
+        <div class="select-container">
+            <h2>Tipo de Mesa</h2>
+            <select name="tipo_mesa" required>
+                <option value="Normal">Normal</option>
+                <option value="Snooker">Snooker</option>
+                <option value="Carambola">Carambola</option>
+            </select>
+        </div>
+        <div class="select-container">
+            <h2>Ambiente</h2>
+            <select name="id_ambiente" required>
+                {% for ambiente in ambientes %}
+                    <option value="{{ ambiente.id }}">{{ ambiente.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn">Guardar Mesa</button>
+    </div>
+</form>
+{% endblock %}

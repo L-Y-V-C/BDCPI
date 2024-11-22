@@ -17,12 +17,12 @@ def create_casillero(data_base, casillero_obj):
 
 def create_mesabillar(data_base, mesabillar_obj):
     cursor = data_base.connection.cursor()
-    sql_command = """CALL db_billar.insert_mesabillar(%s, %s, %s, %s, %s);"""
+    sql_command = """CALL db_billar.insert_mesabillar(%s, %s, %s);"""
     cursor.execute(sql_command, (
-        mesabillar_obj.tipo, mesabillar_obj.estado, mesabillar_obj.id_mantenimiento,
-        mesabillar_obj.id_pago_com, mesabillar_obj.id_ambiente
+        mesabillar_obj.tipo, mesabillar_obj.estado,mesabillar_obj.id_ambiente
     ))
     data_base.connection.commit()
+
 
 def create_checkoutmesa(data_base, checkoutmesa_obj):
     cursor = data_base.connection.cursor()

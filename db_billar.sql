@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-11-2024 a las 01:50:20
+-- Tiempo de generación: 22-11-2024 a las 03:11:08
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -121,6 +121,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_cliente_by_id` (IN `cliente_id`
     WHERE cliente.IDCliente = cliente_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_consumibles_by_local_id` (IN `id` INT)   BEGIN 
+    SELECT 
+    	con.IDConsumible, con.Precio, con.Descripcion, con.Nombre, con.Stock
+    FROM consumible AS con INNER JOIN local_consumible AS loc_con 
+    ON con.IDConsumible = loc_con.IDConsumible AND loc_con.IDLocal = id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_empleados_by_id` (IN `dni` INTEGER)   BEGIN
     SELECT * FROM empleado
     WHERE empleado.DNI = dni;
@@ -142,6 +149,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_empleados_by_local_id` (IN `loc
         ON loc.IDLocal = emp.IDLocal
     WHERE 
         loc.IDLocal = local_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_ingredientes_by_consumible_id` (IN `id` INT)   BEGIN 
+    SELECT
+        ing.IDIngrediente, ing.Nombre, ing.Cantidad
+    FROM ingrediente_consumible AS ing_con INNER JOIN ingrediente AS ing 
+    ON ing_con.IDIngrediente = ing.IDIngrediente AND ing_con.IDConsumible = id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_mesabillar_by_local_id` (IN `local_id` INTEGER)   BEGIN
@@ -166,6 +180,24 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_mesa_by_id` (IN `id` INT)   BEGIN
 	SELECT * FROM mesabillar WHERE mesabillar.IDMesaBillar=id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_mesa_comida_by_local_id` (IN `id` INT)   BEGIN
+    SELECT 
+    	mes.IdMesaComida,
+        mes.Capacidad,
+        mes.Numero,
+        mes.IDAmbiente
+    FROM 
+        mesacomida AS mes
+    INNER JOIN 
+        ambiente AS amb 
+        ON mes.IDAmbiente = amb.IDAmbiente
+    INNER JOIN 
+        tlocal AS loc 
+        ON amb.IDLocal = loc.IDLocal
+    WHERE 
+        loc.IDLocal = id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_monto_consumibles` (IN `cliente_id` INT)   BEGIN
@@ -242,6 +274,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_monto_total_cliente` (IN `clien
         pc.IDCliente = cliente_id;
 
     SELECT MontoMesa, IFNULL(MontoTotalConsumibles, 0), (MontoMesa + IFNULL(MontoTotalConsumibles,0)) AS MontoTotal;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_precio_promedio_consumibles` ()   BEGIN 
+    SELECT 
+    AVG(consumible.Precio) AS PrecioPromedio
+    FROM
+    	consumible;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_ambiente` (IN `NombreAmbiente` VARCHAR(30), IN `CapacidadAmbiente` INT, IN `IDLocalAmbiente` INT)   BEGIN
@@ -397,6 +436,16 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `GetFirstNullCasillero` () RETURNS IN
     LIMIT 1;
 
     RETURN firstCasillero;
+END$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `get_ambiente_name_by_id` (`id` INT) RETURNS VARCHAR(30) CHARSET utf8mb4 COLLATE utf8mb4_general_ci DETERMINISTIC BEGIN
+    DECLARE nombre VARCHAR(30);
+    
+    SELECT ambiente.Nombre INTO nombre
+    FROM ambiente
+    WHERE ambiente.IDAmbiente = id;
+
+    RETURN nombre;
 END$$
 
 CREATE DEFINER=`root`@`localhost` FUNCTION `get_last_checkoutmesa_id` () RETURNS INT(11) DETERMINISTIC BEGIN

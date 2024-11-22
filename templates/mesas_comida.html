@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    MESAS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Mesas</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id</th>
+                    <th class="header-text">Capacidad</th>
+                    <th class="header-text">Numero</th>
+                    <th class="header-text">Ambiente</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mesa in mesas %}
+                    <tr>
+                        <td>{{ mesa.id }}</td>
+                        <td>{{ mesa.capacidad }}</td>
+                        <td>{{ mesa.numero }}</td>
+                        <td>{{ mesa.id_ambiente }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+{% endblock %}

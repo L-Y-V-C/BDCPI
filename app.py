@@ -26,7 +26,6 @@ def index():
 #Mesas
 @app.route('/mesas')
 def mesas():
-    #mesas_arr = selector.get_all_mesabillar(data_base)
     mesas_arr = selector.get_mesabillar_by_local_id(data_base, current_local_id)
     return render_template('mesas.html', mesas = mesas_arr)
 #Pagos
@@ -305,6 +304,22 @@ def equi():
     equis_arr = selector.get_all_equipamento_mantenimiento(data_base)
     return render_template('equipamiento.html', equis = equis_arr)
 
+#
+@app.route('/consumibles')
+def consumibles():
+    consumibles_arr = selector.get_consumibles_by_local_id(data_base, current_local_id)
+    return render_template('consumibles.html', consumibles = consumibles_arr)
+
+@app.route('/view_ingredients/<int:id>', methods = ['GET', 'POST'])
+def view_ingredients(id):
+    ingredientes_arr = selector.get_ingredientes_by_consumible_id(data_base, id)
+    return render_template('ingredientes.html', ingredientes = ingredientes_arr)
+
+@app.route('/mesas_comida')
+def mesas_comida():
+    mesas_arr = selector.get_mesa_comida_by_local_id(data_base, current_local_id)
+    selector.get_ambientes_nombre_by_mesa_id(data_base, mesas_arr)
+    return render_template('mesas_comida.html', mesas = mesas_arr)
 
 @app.context_processor
 def inject_current_local_id():

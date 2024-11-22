@@ -279,3 +279,39 @@ def get_all_ambientes(data_base,local_id):
     for ambiente in arr:
         ambientes_list.append(clases.Ambiente(ambiente[0],ambiente[1],ambiente[2], ambiente[3]))
     return ambientes_list
+
+def get_pagoListConsumible(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_pagoListConsumible();"""
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    pagoListConsumible = []
+    for pagoListEach in arr:
+        pagoListConsumible.append(clases.pagoListConsumible(pagoListEach[0],pagoListEach[1],pagoListEach[2], pagoListEach[3], pagoListEach[4]))
+    return pagoListConsumible
+
+def get_pagoListMesa(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """CALL db_billar.get_pagoListMesa();"""
+    cursor.execute(sql_command)
+    arr = cursor.fetchall()
+    pagoListMesa = []
+    for pagoListEach in arr:
+        pagoListMesa.append(clases.pagoListMesa(pagoListEach[0],pagoListEach[1],pagoListEach[2], pagoListEach[3], pagoListEach[4], pagoListEach[5], pagoListEach[6]))
+    return pagoListMesa
+
+def get_totalPagoListConsumible(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """SELECT db_billar.get_totalPagoListConsumible();"""
+    cursor.execute(sql_command)
+    arr = cursor.fetchone()
+    pagoTotalConsumible = clases.pagoTotalConsumibles(arr[0])
+    return pagoTotalConsumible
+
+def get_totalPagoListMesa(data_base):
+    cursor = data_base.connection.cursor()
+    sql_command = """SELECT db_billar.get_totalPagoListMesa();"""
+    cursor.execute(sql_command)
+    arr = cursor.fetchone()
+    pagoTotalMesas = clases.pagoTotalMesas(arr[0])
+    return pagoTotalMesas

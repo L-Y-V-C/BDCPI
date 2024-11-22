@@ -348,6 +348,14 @@ def registrar_mesa_comida():
         inserter.create_mesacomida(data_base, mesa_comida)
     return render_template('registrar_mesa_comida.html', ambientes=ambientes_arr)
 
+@app.route('/listaPagos')
+def totales():
+    pagoConsumibleList = selector.get_pagoListConsumible(data_base)
+    pagoMesaList = selector.get_pagoListMesa(data_base)
+    pagoTotalConsumible = selector.get_totalPagoListConsumible(data_base)
+    pagoTotalMesa = selector.get_totalPagoListMesa(data_base)
+    return render_template('pagosLista.html', pagoConsumibleList = pagoConsumibleList, pagoMesaList = pagoMesaList, pagoTotalConsumible = pagoTotalConsumible, pagoTotalMesa = pagoTotalMesa)
+
 @app.context_processor
 def inject_current_local_id():
     global current_local_id

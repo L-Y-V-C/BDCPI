@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    MESAS
+{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tablas.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="table" id="customers_table">
+    <section class="table__header">
+        <h1 style="color: white;">Lista de Pagos</h1>
+    </section>
+    <section class="table__body">
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id Pago</th>
+                    <th class="header-text">Metodo</th>
+                    <th class="header-text">Id Pedido-consumible</th>
+                    <th class="header-text">Nombre</th>
+                    <th class="header-text">Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pagocl in pagoConsumibleList %}
+                    <tr>
+                        <td style="text-align: center;">{{ pagocl.id_pago }}</td>
+                        <td style="text-align: center;">{{ pagocl.metodo }}</td>
+                        <td style="text-align: center;">{{ pagocl.idpc }}</td>
+                        <td style="text-align: center;">{{ pagocl.nombre }}</td>
+                        <td style="text-align: center;">{{ pagocl.precio }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Total consumibles</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td style="text-align: center;">{{ pagoTotalConsumible.total }}</td>
+                    </tr>
+            </tbody>
+        </table>
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Id Pago</th>
+                    <th class="header-text">Metodo</th>
+                    <th class="header-text">Id PagoCOM</th>
+                    <th class="header-text">Precio por hora</th>
+                    <th class="header-text">Hora inicio</th>
+                    <th class="header-text">Hora fin</th>
+                    <th class="header-text">Monto</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pagoml in pagoMesaList %}
+                    <tr>
+                        <td style="text-align: center;">{{ pagoml.id_pago }}</td>
+                        <td style="text-align: center;">{{ pagoml.metodo }}</td>
+                        <td style="text-align: center;">{{ pagoml.idpc }}</td>
+                        <td style="text-align: center;">{{ pagoml.precioHora }}</td>
+                        <td style="text-align: center;">{{ pagoml.inicio }}</td>
+                        <td style="text-align: center;">{{ pagoml.fin }}</td>
+                        <td style="text-align: center;">{{ pagoml.monto }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <table>
+            <thead>
+                <tr>
+                    <th class="header-text">Total mesas</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td style="text-align: center;">{{ pagoTotalMesa.total }}</td>
+                    </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+{% endblock %}

@@ -79,12 +79,7 @@ class Ambiente:
         self.id_local = id_local
 
 class Checkoutmesa:
-    id_pago_com = 0
-    precio_hora = 0.0
-    hora_fin = ""
-    hora_inicio = ""
-    id_local = 0
-    
+
     def __init__(self, id_pago_com, precio_hora, hora_fin, hora_inicio, id_local):
         self.id_pago_com = id_pago_com
         self.precio_hora = precio_hora
@@ -230,14 +225,12 @@ class MontoMesa:
         self.MontoMesa = MontoMesa
 
 class MontoConsumible:
-    def __init__(self, IDPago, IDPedidoConsumible, IDConsumible, Nombre, Precio, Cantidad, MontoConsumible):
+    def __init__(self, IDPago, IDPedidoConsumible, IDConsumible, Nombre, Precio):
         self.IDPago = IDPago
         self.IDPedidoConsumible = IDPedidoConsumible
         self.IDConsumible = IDConsumible
         self.Nombre = Nombre
         self.Precio = Precio
-        self.Cantidad = Cantidad
-        self.MontoConsumible = MontoConsumible
 
 class MontoTotal:
     def __init__(self, MontoMesa, MontoConsumible, MontoTotal):

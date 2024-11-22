@@ -104,8 +104,7 @@ def get_monto_mesa(data_base, cliente_id):
     cursor.execute(sql_command)
     arr = cursor.fetchone()
     if arr == None:
-        print("boi is NONe")
-        monto_mesa = clases.MontoMesa(None,None,None,"00:00:00","00:00:00",0)
+        monto_mesa = clases.MontoMesa(None, None, None, "00:00:00", "00:00:00", 0)
         return monto_mesa
     monto_mesa = clases.MontoMesa(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
     return monto_mesa
@@ -117,8 +116,7 @@ def get_monto_consumibles(data_base, cliente_id):
     arr = cursor.fetchall()
     monto_consumibles_list = []
     for monto_consumible in arr:
-        monto_consumibles_list.append(clases.MontoConsumible(monto_consumible[0], monto_consumible[1], monto_consumible[2], monto_consumible[3], 
-            monto_consumible[4], monto_consumible[5], monto_consumible[6]))
+        monto_consumibles_list.append(clases.MontoConsumible(monto_consumible[0], monto_consumible[1], monto_consumible[2], monto_consumible[3], monto_consumible[4]))
     return monto_consumibles_list
 
 def get_monto_total_cliente(data_base, cliente_id):

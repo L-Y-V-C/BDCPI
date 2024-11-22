@@ -74,6 +74,10 @@ def update_mesa_info(id):
     mesa_to_update = selector.get_mesa_by_id(data_base, id)
     clientes_arr = selector.get_all_clientes(data_base)
     if request.method == 'POST':
+        if request.form.get('estado') == 'Mantenimiento' or request.form.get('estado') == 'Disponible':
+            mesa_to_update.estado = request.form.get('estado')
+            updater.update_mesa_billar(data_base, mesa_to_update)
+            return redirect(url_for('mesas'))
         preciohora = 0
         if mesa_to_update.tipo == 'Normal':
             preciohora = 7
@@ -81,12 +85,12 @@ def update_mesa_info(id):
             preciohora = 6
         else:
             preciohora = 8
-        checkoutmesa_obj = clases.Checkoutmesa(0,preciohora, request.form['hora_fin'], request.form['hora_inicio'], current_local_id)
+        checkoutmesa_obj = clases.Checkoutmesa(0,preciohora, request.form.get('hora_fin'), request.form.get('hora_inicio'), current_local_id)
         inserter.create_checkoutmesa(data_base, checkoutmesa_obj)
         last_checkoutmesa_id = selector.get_last_checkoutmesa_id(data_base)
-        pago_obj = clases.Pago(0, None, last_checkoutmesa_id, None)
+        pago_obj = clases.Pago(0, None, None, last_checkoutmesa_id)
         inserter.create_pago(data_base, pago_obj)
-        mesa_to_update.estado = request.form['estado']
+        mesa_to_update.estado = request.form.get('estado')
         mesa_to_update.id_pago_com = last_checkoutmesa_id
         cliente_id = request.form.get('clienteSelect')
         cliente_to_update = selector.get_cliente_by_id(data_base, cliente_id)
@@ -171,8 +175,9 @@ def montos_cliente(cliente_id):
 #REALIZAR PAGO
 @app.route('/realizarPago/<int:cliente_id>', methods=['GET', 'POST'])
 def realizar_pago(cliente_id):
-    updater.pagar_monto_total(data_base, cliente_id)
-    return render_template('clientes_table.html')
+    metodo_pago = request.args['metodo']
+    updater.pagar_monto_total(data_base, cliente_id, metodo_pago)
+    return redirect(url_for('clientes'))
 
 #LOCALES
 @app.route('/local')

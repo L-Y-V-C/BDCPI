@@ -46,7 +46,7 @@
                 <h2>Asignar cliente</h2>
                 <div id="clientes-container-COM" class="select-container">
                     <div class="cliente-group-COM">
-                        <select name="clienteSelect" id="clienteSelect" required>
+                        <select name="clienteSelect" id="clienteSelect">
                             <option value="" disabled selected>Seleccione un cliente</option>
                             {% for cliente in clientes %}
                                 <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
@@ -64,9 +64,9 @@
                 </div>
                 <div class="hora-group-COM">
                     <h3><label for="hora_inicio">Hora de inicio</label></h3>
-                    <input type="time" id="hora_inicio" name="hora_inicio" required>
+                    <input type="time" id="hora_inicio" name="hora_inicio">
                     <h3><label for="hora_fin">Hora de fin</label></h3>
-                    <input type="time" id="hora_fin" name="hora_fin" required>
+                    <input type="time" id="hora_fin" name="hora_fin">
                 </div>
             </div>
         {% endif %}
